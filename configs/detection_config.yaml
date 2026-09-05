@@ -1,0 +1,42 @@
+# Face Detection Model Configuration
+# MEMBER 1: Update this file with optimal hyperparameters
+
+# Training settings
+epochs: 100
+batch_size: 16
+num_workers: 4
+
+# Optimizer settings
+learning_rate: 0.0001
+weight_decay: 0.0001
+min_lr: 0.000001
+
+# Gradient settings
+max_grad_norm: 10.0
+
+# Loss weights
+focal_alpha: 0.25
+focal_gamma: 2.0
+box_weight: 1.0
+cls_weight: 1.0
+
+# Model settings
+model_size: n  # n, s, m, l, x
+num_classes: 1  # face detection = 1 class
+img_size: 512
+pretrained: false
+
+# Data settings
+data_root: data/processed/wider_face
+
+# Checkpointing
+save_interval: 10
+checkpoint_dir: models/checkpoints
+
+# Logging
+log_dir: outputs/logs/detection
+
+# Evaluation
+val_interval: 5
+conf_threshold: 0.5
+iou_threshold: 0.45
