@@ -93,3 +93,5 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+data/
