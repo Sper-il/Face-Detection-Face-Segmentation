@@ -1,0 +1,48 @@
+# Face Segmentation Model Configuration
+# MEMBER 2: Update this file with optimal hyperparameters
+
+# Training settings
+epochs: 100
+batch_size: 16
+num_workers: 4
+
+# Optimizer settings
+learning_rate: 0.0001
+weight_decay: 0.0001
+min_lr: 0.000001
+
+# Scheduler settings
+scheduler: cosine_annealing_warm_restarts
+T_0: 10
+T_mult: 2
+
+# Mixed precision training
+use_amp: true
+
+# Loss weights
+dice_weight: 1.0
+ce_weight: 1.0
+focal_weight: 0.5
+
+# Model settings
+backbone: alternative_segmentation  # alternative_segmentation, deeplabv3plus
+num_classes: 19  # CelebAMask-HQ has 19 classes
+img_size: 512
+pretrained: false
+
+# Model architecture
+features: [64, 128, 256, 512]  # Encoder feature channels
+dropout: 0.5
+
+# Data settings
+data_root: data/processed/celebamask_hq
+
+# Checkpointing
+save_interval: 10
+checkpoint_dir: models/checkpoints
+
+# Logging
+log_dir: outputs/logs/segmentation
+
+# Evaluation
+val_interval: 5

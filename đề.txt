@@ -1,0 +1,14 @@
+Topic: Face Detection & Face Segmentation
+Bài toán:
+    - Detection: khuôn mặt trong ảnh đông người
+    - Segmentation: vùng mặt (face mask)WIDER FACE
+Dataset:
+    - WIDER FACE
+    - CelebAMask-HQ	
+Mô hình gợi ý:
+    - RetinaFace
+    - U-Net / Mask R-CNN	
+Ứng dụng: Camera an ninh, nhận diện khuôn mặt trong đám đông
+Repo github gợi ý:
+    - Detection: https://github.com/Tencent/FaceDetection-DSFD
+    - Segmentation: https://github.com/YuvalNirkin/face_segmentation

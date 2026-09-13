@@ -1,0 +1,13 @@
+# Requirements for Data Preprocessing
+
+# Core Dependencies
+opencv-python>=4.8.0
+numpy>=1.24.0
+tqdm>=4.65.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+Pillow>=10.0.0
+
+# Optional (for advanced features)
+scikit-image>=0.21.0  # Advanced image processing
+pandas>=2.0.0  # Data analysis
