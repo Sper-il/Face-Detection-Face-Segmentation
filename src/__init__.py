@@ -11,6 +11,4 @@ __all__ = [
     'training',
     'evaluation',
     'inference',
-    'utils',
-    'visualization'
 ]

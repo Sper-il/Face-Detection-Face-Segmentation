@@ -1,3 +1,0 @@
-"""
-Download Pretrained Models
-"""

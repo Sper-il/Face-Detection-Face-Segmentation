@@ -1,3 +1,0 @@
-"""
-WIDER FACE Evaluation
-"""

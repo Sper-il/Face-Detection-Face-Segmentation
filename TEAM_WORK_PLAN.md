@@ -28,9 +28,6 @@
 | Thành viên | File | Trách nhiệm |
 |-----------|------|-------------|
 | **M3** | `src/evaluation/metrics.py` | Metrics (mAP, IoU, Dice, etc.) |
-| **M3** | `src/evaluation/widerface_eval.py` | WIDER FACE evaluation |
-| **M3** | `src/evaluation/fddb_eval.py` | FDDB evaluation |
-| **M3** | `src/evaluation/visualization.py` | Result visualization |
 
 ### 👤 Người 4: UI - Giao diện & Demo
 | Thành viên | File | Trách nhiệm |
@@ -79,10 +76,7 @@ face_detection_segmentation/
 │   │
 │   ├── evaluation/                        # 👤 Người 3 - EVALUATE
 │   │   ├── __init__.py
-│   │   ├── metrics.py                    # Metric calculations
-│   │   ├── widerface_eval.py             # WIDER FACE evaluation
-│   │   ├── fddb_eval.py                 # FDDB evaluation
-│   │   └── visualization.py             # Result visualization
+│   │   └── metrics.py                    # Metric calculations (mAP, IoU, Dice)
 │   │
 │   ├── inference/                         # 👤 Người 4 - UI
 │   │   ├── __init__.py
@@ -90,11 +84,6 @@ face_detection_segmentation/
 │   │   ├── segmentor.py                  # Segmentation inference
 │   │   ├── pipeline.py                  # End-to-end pipeline
 │   │   └── batch_inference.py           # Batch processing
-│   │
-│   └── utils/                            # Dùng chung
-│       ├── __init__.py
-│       ├── logger.py                     # Logging utilities
-│       └── helpers.py                   # Helper functions
 │
 ├── configs/                               # Cấu hình
 │   ├── __init__.py                       # Config loader
@@ -103,14 +92,9 @@ face_detection_segmentation/
 │
 ├── scripts/                              # Scripts chạy
 │   ├── demo.py                          # Demo inference
-│   ├── eval_widerface.py               # Evaluate on WIDER FACE
-│   ├── eval_fddb.py                    # Evaluate on FDDB
-│   ├── download_models.py               # Download pretrained weights
-│   └── export_model.py                  # Export to ONNX/TFLite
-│
-├── weights/                              # Model weights
-│   ├── pretrained/                     # Pretrained backbones
-│   └── trained/                        # Trained models
+│   ├── run_preprocessing.py            # Run preprocessing pipeline
+│   ├── validate_preprocessing.py        # Validate preprocessing outputs
+│   └── test_preprocessing_quick.py      # Quick preprocessing test
 │
 ├── data/                                 # Data (đã preprocess)
 │   ├── processed/
@@ -544,10 +528,7 @@ python scripts/demo.py --webcam
 - [ ] `src/training/train_segmentation.py` - Segmentation training script
 
 ### 👤 Người 3: EVALUATE
-- [ ] `src/evaluation/metrics.py` - Metrics calculations
-- [ ] `src/evaluation/widerface_eval.py` - WIDER FACE evaluation
-- [ ] `src/evaluation/fddb_eval.py` - FDDB evaluation
-- [ ] `src/evaluation/visualization.py` - Result visualization
+- [x] `src/evaluation/metrics.py` - Metrics calculations
 
 ### 👤 Người 4: UI
 - [ ] `src/inference/detector.py` - Detection inference

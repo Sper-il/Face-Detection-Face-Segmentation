@@ -1,3 +1,0 @@
-"""
-FDDB Evaluation
-"""

@@ -103,86 +103,64 @@ Face Detection & Face Segmentation/
 │
 ├── src/
 │   ├── detection/                          # Face Detection
-│   │   ├── model.py                       # Detection model
-│   │   ├── losses.py                      # Loss functions
+│   │   ├── model.py                       # Detection model (DSFD-based)
+│   │   ├── losses.py                      # Loss functions (Focal, SmoothL1, GIoU)
 │   │   └── __init__.py
 │   │
 │   ├── segmentation/                       # Face Segmentation
-│   │   ├── model.py                       # Segmentation model
-│   │   ├── unet.py                       # Alternative segmentation model
-│   │   ├── losses.py                     # Loss functions
+│   │   ├── model.py                       # Segmentation model (FCN8s-based)
+│   │   ├── unet.py                        # Alternative segmentation model (U-Net)
+│   │   ├── losses.py                      # Loss functions (Dice, Focal, Combined)
 │   │   └── __init__.py
 │   │
-│   ├── data/                              # Data loading & augmentation
-│   │   ├── widerface.py                   # WIDER FACE dataset
-│   │   ├── celebamask_hq.py             # CelebAMask-HQ dataset
-│   │   ├── transforms.py                 # Image transforms
-│   │   ├── augmentation.py              # Data augmentation
-│   │   └── collate.py                   # Custom collate functions
-│   │
 │   ├── training/                          # Training scripts
-│   │   ├── train_detection.py           # Train detection model
-│   │   ├── train_segmentation.py        # Train segmentation model
-│   │   ├── trainer.py                   # Base trainer class
-│   │   ├── lr_scheduler.py             # Learning rate schedulers
-│   │   └── checkpoint.py                # Checkpoint management
+│   │   ├── train_detection.py             # Train detection model
+│   │   ├── train_segmentation.py          # Train segmentation model
+│   │   └── __init__.py
 │   │
-│   ├── evaluation/                        # Evaluation scripts
-│   │   ├── metrics.py                  # Metric calculations
-│   │   └── visualization.py            # Result visualization
+│   ├── evaluation/                        # Evaluation
+│   │   ├── metrics.py                     # Metric calculations (mAP, IoU, Dice)
+│   │   └── __init__.py
 │   │
-│   ├── inference/                         # Inference scripts
-│   │   ├── detector.py                 # Detection inference
-│   │   ├── segmentor.py                # Segmentation inference
-│   │   ├── pipeline.py                 # End-to-end pipeline
-│   │   └── batch_inference.py          # Batch processing
-│   │
-│   └── utils/                            # Utilities
-│       ├── logger.py                   # Logging utilities
-│       ├── config.py                   # Config management
-│       └── helpers.py                  # Helper functions
+│   └── inference/                         # Inference scripts
+│       ├── detector.py                    # Detection inference
+│       ├── segmentor.py                   # Segmentation inference
+│       ├── pipeline.py                    # End-to-end pipeline
+│       └── batch_inference.py             # Batch processing
 │
 ├── configs/                               # Configuration files
-│   └── config.yaml                      # Configuration
+│   ├── detection_config.yaml              # Detection hyperparameters
+│   ├── segmentation_config.yaml           # Segmentation hyperparameters
+│   └── __init__.py                        # Config loader
 │
 ├── scripts/                               # Executable scripts
-│   ├── demo.py                          # Demo inference
-│   ├── eval_widerface.py               # Evaluate on WIDER FACE
-│   ├── eval_fddb.py                    # Evaluate on FDDB
-│   ├── download_models.py               # Download pretrained weights
-│   └── export_model.py                  # Export to ONNX/TFLite
-│
-├── weights/                              # Model weights
-│   ├── pretrained/                      # Pretrained backbones (VGG16)
-│   └── trained/                         # Trained models
-│
-├── data/                                  # Data
-│   ├── raw/                             # Original datasets
-│   │   ├── CelebAMask-HQ/
-│   │   └── WIDER_FACE/
-│   └── processed/                       # Preprocessed data
-│       ├── celebamask_hq/               # 30,000 images + masks
-│       └── wider_face/                  # 11,030 images + annotations
-│
-├── notebooks/                             # Jupyter notebooks
-│   ├── analysis.ipynb                   # Data analysis
-│   └── visualization.ipynb              # Result visualization
+│   ├── demo.py                            # Demo inference (image/video/webcam)
+│   ├── run_preprocessing.py               # Run data preprocessing
+│   ├── validate_preprocessing.py          # Validate preprocessing outputs
+│   └── test_preprocessing_quick.py        # Quick preprocessing test
 │
 ├── outputs/                               # Output results
-│   ├── logs/                           # Training logs
-│   ├── metrics/                        # Evaluation metrics
-│   └── visualizations/                 # Visualization results
+│   ├── logs/                              # Training logs (TensorBoard)
+│   ├── metrics/                           # Evaluation metrics (JSON/CSV)
+│   └── visualizations/                    # Visualization results
 │
 ├── docs/                                  # Documentation
 │   ├── DATA_PREPROCESSING_SUMMARY.md
 │   ├── HUONG_DAN_TAI_DATASET.md
 │   └── DATASET_DOWNLOAD_GUIDE.md
 │
-├── requirements.txt
-├── setup.py
-├── TEAM_WORK_PLAN.md                    # Team assignment
-├── PREPROCESSING_COMPLETE_FINAL.md
-└── README.md                            # This file
+├── data/
+│   ├── raw/                               # Original datasets
+│   └── processed/                         # Preprocessed data
+│       ├── celebamask_hq/
+│       └── wider_face/
+│
+├── requirements.txt                       # Dependencies
+├── requirements_preprocessing.txt         # Preprocessing-only dependencies
+├── quick_run.bat                          # Quick setup & run script (Windows)
+├── HUONG_DAN_CHAY_MODEL.md                # Usage guide (Vietnamese)
+├── TEAM_WORK_PLAN.md                      # Team task assignments
+└── README.md                              # This file
 ```
 
 ---
