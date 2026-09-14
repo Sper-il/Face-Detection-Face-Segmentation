@@ -3,8 +3,8 @@
 
 # Training settings
 epochs: 100
-batch_size: 16
-num_workers: 4
+batch_size: 4
+num_workers: 0
 
 # Optimizer settings
 learning_rate: 0.0001
@@ -17,7 +17,7 @@ T_0: 10
 T_mult: 2
 
 # Mixed precision training
-use_amp: true
+use_amp: false
 
 # Loss weights
 dice_weight: 1.0
@@ -27,7 +27,7 @@ focal_weight: 0.5
 # Model settings
 backbone: alternative_segmentation  # alternative_segmentation, deeplabv3plus
 num_classes: 19  # CelebAMask-HQ has 19 classes
-img_size: 512
+img_size: 256
 pretrained: false
 
 # Model architecture
