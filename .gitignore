@@ -64,11 +64,11 @@ data/
 models/checkpoints/*.pth
 models/trained/*.pth
 
-# Outputs
-outputs/visualizations/*.png
-outputs/visualizations/*.jpg
-outputs/metrics/*.csv
-outputs/metrics/*.json
+# Outputs (Bỏ comment để đẩy file sinh ra lên GitHub theo yêu cầu)
+# outputs/visualizations/*.png
+# outputs/visualizations/*.jpg
+# outputs/metrics/*.csv
+# outputs/metrics/*.json
 
 # Environment variables
 .env

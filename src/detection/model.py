@@ -96,8 +96,14 @@ class PriorBox:
             feat_size = self.feature_maps[k]
             step = self.steps[k]
             
-            for i in range(feat_size):
-                for j in range(feat_size):
+            # Handle feat_size as [H, W] list or single int
+            if isinstance(feat_size, (list, tuple)):
+                feat_h, feat_w = feat_size[0], feat_size[1]
+            else:
+                feat_h, feat_w = feat_size, feat_size
+            
+            for i in range(feat_h):
+                for j in range(feat_w):
                     # Unit center x, y
                     cx = (j + 0.5) * step / self.image_size
                     cy = (i + 0.5) * step / self.image_size
@@ -437,7 +443,8 @@ class DSFDDetector(nn.Module):
             self.cfg.get('min_sizes', [16, 32, 64, 128, 256, 512]),
             self.cfg.get('max_sizes', [32, 64, 128, 256, 512, 1024])
         )
-        priors = Variable(priorbox.forward(), volatile=True)
+        with torch.no_grad():
+            priors = priorbox.forward()
         return priors
         
     def forward(self, x):
@@ -517,6 +524,11 @@ def build_dsfd_detector(pretrained=False, weight_path=None, backbone='resnet50')
     if weight_path:
         model.load_weights(weight_path)
     return model
+
+
+# Aliases for package-level imports
+FaceDetector = DSFDDetector
+build_face_detector = build_dsfd_detector
 
 
 # Quick test

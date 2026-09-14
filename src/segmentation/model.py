@@ -86,10 +86,10 @@ class FCN8s(nn.Module):
                     nn.init.constant_(m.bias, 0)
                     
     def forward(self, x):
-        # Encoder
-        pool3 = self.features[:17](x)   # Get up to pool3 (256 channels)
-        pool4 = self.features[:24](x)   # Get up to pool4 (512 channels)
-        pool5 = self.features(x)        # Full encoder
+        # Encoder: sequential feature extraction to save memory and avoid re-computing
+        pool3 = self.features[:17](x)           # Layers 0..16 -> pool3 (256 channels)
+        pool4 = self.features[17:24](pool3)      # Layers 17..23 -> pool4 (512 channels)
+        pool5 = self.features[24:](pool4)        # Layers 24..30 -> pool5 (512 channels)
         
         # Decoder
         score_pool4 = self.score_pool4(pool4)
@@ -438,6 +438,12 @@ def build_face_segmentor(
         return LightweightUNet(num_classes=num_classes, dropout=dropout)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
+
+
+# Aliases for package-level imports
+# FaceSegmentor wraps the default model (UNetFaceSeg)
+FaceSegmentor = UNetFaceSeg
+build_segmentation_model = build_face_segmentor
 
 
 # Quick test

@@ -1,0 +1,18 @@
+{
+  "model": "DSFD",
+  "task": "detection",
+  "epochs_trained": 100,
+  "total_time_minutes": 204.39,
+  "best_map50": 0.5,
+  "final_train_loss": 1.2818540199077688e-05,
+  "final_val_loss": 1.2579976100823842e-05,
+  "final_lr": 6.91341716182545e-05,
+  "device": "cpu",
+  "timestamp": "2026-09-14T05:14:10.016455",
+  "outputs": {
+    "checkpoints": "models\\checkpoints\\detection_20260914_014936",
+    "logs": "outputs\\logs\\detection\\detection_20260914_014936",
+    "metrics": "outputs\\metrics\\detection\\detection_20260914_014936",
+    "visualizations": "outputs\\visualizations\\detection\\detection_20260914_014936"
+  }
+}
