@@ -214,9 +214,9 @@ face_detection_segmentation/
 **Files cần làm:**
 | File | Mô tả | Trạng thái |
 |------|-------|------------|
-| `src/evaluation/widerface_eval.py` | WIDER FACE evaluation | ⬜ Chưa làm |
-| `src/evaluation/fddb_eval.py` | FDDB evaluation | ⬜ Chưa làm |
-| `src/evaluation/visualization.py` | Result visualization | ⬜ Chưa làm |
+| `src/evaluation/widerface_eval.py` | WIDER FACE evaluation | ✅ Đã làm |
+| `src/evaluation/fddb_eval.py` | FDDB evaluation | ✅ Đã làm |
+| `src/evaluation/visualization.py` | Result visualization | ✅ Đã làm |
 
 **Yêu cầu:**
 - WIDER FACE: mAP theo difficulty (Easy, Medium, Hard)
@@ -529,6 +529,9 @@ python scripts/demo.py --webcam
 
 ### 👤 Người 3: EVALUATE
 - [x] `src/evaluation/metrics.py` - Metrics calculations
+- [x] `src/evaluation/widerface_eval.py` - WIDER FACE evaluation (mAP theo Easy/Medium/Hard)
+- [x] `src/evaluation/fddb_eval.py` - FDDB evaluation (ROC curve + output format chuẩn)
+- [x] `src/evaluation/visualization.py` - So sánh GT vs Prediction, confusion matrix, ROC/PR curve
 
 ### 👤 Người 4: UI
 - [ ] `src/inference/detector.py` - Detection inference
