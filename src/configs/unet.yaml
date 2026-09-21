@@ -1,0 +1,42 @@
+# U-Net training config (v6 - scaled up for IoU > 0.85)
+
+model:
+  encoder: resnet34
+  pretrained_encoder: true
+  num_classes: 1           # binary face mask
+  activation: sigmoid
+
+data:
+  train_images_dir: data/processed/segmentation/train/images
+  train_masks_dir:  data/processed/segmentation/train/masks
+  val_images_dir:   data/processed/segmentation/val/images
+  val_masks_dir:    data/processed/segmentation/val/masks
+  image_size: 512
+  augmentations:
+    - horizontal_flip
+    - color_jitter
+    - random_crop
+    - scale
+
+training:
+  optimizer: adamw
+  lr: 2.0e-4                 # was 1e-4 — bumped for faster convergence on full data
+  weight_decay: 1.0e-4
+  scheduler: cosine
+  batch_size: 16
+  epochs: 25                 # was 20 — extra 5 epochs lets model converge past IoU 0.85
+  early_stop_patience: 7    # was 5 — give the model more slack to find the best IoU
+  amp: true
+  seed: 42
+
+loss:
+  bce_weight: 0.3            # was 0.5 — emphasise Dice which is more robust on full data
+  dice_weight: 0.7           # was 0.5
+
+eval:
+  threshold: 0.5
+  morphology:
+    opening_kernel: 3
+    closing_kernel: 5
+  # Target IoU for the CI gate (see .github/workflows/ci.yml).
+  target_iou: 0.85

@@ -95,3 +95,14 @@ temp/
 *.tmp
 
 data/
+
+# Local artifacts (not part of project source)
+runs/
+bao_cao_content.txt
+data_audit.json
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+d?.txt
+*.bak
+*.bak2
+.coverage

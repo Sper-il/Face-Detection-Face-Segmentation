@@ -1,0 +1,47 @@
+# RetinaFace training config
+#
+# IMPORTANT: This config is for training a new RetinaFace model.
+# The pre-trained checkpoint (models/retinaface_final.pth) uses a custom
+# ResNet-34 backbone implementation (_ResNet34 class in src/detection/retinaface.py).
+# The default training backbone for the canonical pipeline is ResNet-34.
+
+model:
+  backbone_type: resnet34
+  pretrained_backbone: true
+  fpn_levels: 3
+  num_anchors: 9            # 3 scales x 3 ratios
+  num_classes: 1            # binary face / background
+  landmark_count: 5
+  strides: [8, 16, 32]      # MUST match backbone output strides
+
+data:
+  train_csv: data/processed/detection/train/annotations.csv
+  val_csv:   data/processed/detection/val/annotations.csv
+  test_csv:  data/processed/detection/test/annotations.csv
+  image_size: 640
+  augmentations:
+    - horizontal_flip
+    - color_jitter
+    - random_crop
+    - mosaic
+
+training:
+  optimizer: adamw
+  lr: 2.0e-4                  # was 1e-4 — bumped slightly for better convergence
+  weight_decay: 1.0e-4
+  scheduler: cosine
+  batch_size: 8
+  epochs: 12                  # was 20 but with early_stop_patience=8 — gives more room for cls head to mature
+  early_stop_patience: 8
+  amp: true
+  seed: 42
+
+loss:
+  cls_weight: 2.0             # was 1.0 — boost classification signal so face scores climb above threshold
+  box_weight: 1.0
+  landmark_weight: 0.25       # was 0.5 — most anchors have lmk_mask=0 (no landmarks in WIDER), so down-weight
+
+eval:
+  conf_threshold: 0.02        # was 0.7 — too high for partially-trained model; 0.02 is the eval-time default
+  nms_iou_threshold: 0.5
+  top_k: 5000

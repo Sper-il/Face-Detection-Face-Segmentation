@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "face-detection-face-segmentation"
+version = "0.1.0"
+description = "2-stage face detection (RetinaFace) + face segmentation (U-Net) pipeline for crowded scenes."
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+exclude = ["tests*", "demos*", "notebooks*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+select = ["E", "F", "I", "W", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --cov=src --cov-report=term-missing"
