@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange)](https://pytorch.org/)
-[![Status](https://img.shields.io/badge/Status-Data%20Preprocessing%20Complete-green)](./PREPROCESSING_COMPLETE_FINAL.md)
+[![Status](https://img.shields.io/badge/Status-Data%20Preprocessing%20Complete-green)](./docs/references/DATA_PREPROCESSING_SUMMARY.md)
 
 ---
 
@@ -92,7 +92,7 @@ Output: Detected Faces + Segmentation Masks
 - **Faces**: 67,088 valid faces (53,616 train / 13,472 val)
 - **Filtering**: Removed blur, small faces (<10px), invalid boxes
 
-See [PREPROCESSING_COMPLETE_FINAL.md](./PREPROCESSING_COMPLETE_FINAL.md) for detailed statistics.
+See [docs/references/DATA_PREPROCESSING_SUMMARY.md](./docs/references/DATA_PREPROCESSING_SUMMARY.md) for detailed statistics.
 
 ---
 
@@ -147,10 +147,14 @@ Face Detection & Face Segmentation/
 │   ├── metrics/                           # Evaluation metrics (JSON/CSV)
 │   └── visualizations/                    # Visualization results
 │
-├── docs/                                  # Documentation
-│   ├── DATA_PREPROCESSING_SUMMARY.md
-│   ├── HUONG_DAN_TAI_DATASET.md
-│   └── DATASET_DOWNLOAD_GUIDE.md
+├── docs/                                  # Documentation (all guides, plans, reports)
+│   ├── guides/                            # User-facing how-tos
+│   ├── planning/                          # Project plans & roadmap
+│   ├── status/                            # Progress logs & AI usage
+│   ├── references/                        # Research notes & summaries
+│   ├── adr/                               # Architecture Decision Records
+│   ├── audit/                             # Audit reports
+│   └── plan/                              # Implementation plan
 │
 ├── data/
 │   ├── raw/                               # Original datasets
@@ -161,8 +165,6 @@ Face Detection & Face Segmentation/
 ├── requirements.txt                       # Dependencies
 ├── requirements_preprocessing.txt         # Preprocessing-only dependencies
 ├── quick_run.bat                          # Quick setup & run script (Windows)
-├── HUONG_DAN_CHAY_MODEL.md                # Usage guide (Vietnamese)
-├── TEAM_WORK_PLAN.md                      # Team task assignments
 └── README.md                              # This file
 ```
 
@@ -408,7 +410,7 @@ This is an academic project for computer vision research and education.
 
 ## 👥 TEAM STRUCTURE
 
-See [TEAM_WORK_PLAN.md](./TEAM_WORK_PLAN.md) for detailed task assignments.
+See [docs/planning/TEAM_WORK_PLAN.md](./docs/planning/TEAM_WORK_PLAN.md) for detailed task assignments.
 
 | Member | Role | Responsibility |
 |--------|------|----------------|
