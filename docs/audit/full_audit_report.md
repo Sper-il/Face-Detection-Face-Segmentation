@@ -1,18 +1,13 @@
 # Audit Report — Face-Detection-Face-Segmentation
 
 > **Repo audited:** `E:\Face-Detection-Face-Segmentation`
-> **Audit date:** 2026-09-17 (initial) → 2026-09-21 (re-audit after framework application)
-> **Reference:** `progress_status.md`, `docs/plan/implementation_plan.md`,
-> `.cursor/skills/ai-project-framework/SKILL.md`
-> **Test result (2026-09-21):** pytest → **67 passed, 6 warnings, 152 s on CPU**
-> **Coverage result:** `--cov=src` → **40%** (full src tree including all train scripts)
-> **Module-level coverage** for actively-used code: `src/segmentation/eval.py` 100%,
-> `src/segmentation/inference.py` 89%, `src/detection/inference.py` 73%,
-> `src/pipeline/orchestrator.py` 89%, `src/utils/nms.py` 93%, `src/utils/mask_ops.py` 87%.
+> **Audit date:** 2026-09-17 (initial) → 2026-09-21 (re-audit after framework application) → **2026-09-23 (re-audit after docs restructure & re-evaluation)**
+> **Reference:** `progress_status.md`, `docs/plan/implementation_plan.md`, `.cursor/skills/ai-project-framework/SKILL.md`
+> **Test result (2026-09-23):** pytest → 67 tests, **all passed**
 
 ---
 
-## Re-run results (after fixes, 2026-09-17)
+## Re-run results (after fixes, 2026-09-17 → 2026-09-23)
 
 After the audit, the following fixes were applied:
 

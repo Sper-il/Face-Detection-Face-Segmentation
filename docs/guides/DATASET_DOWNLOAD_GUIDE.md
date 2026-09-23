@@ -29,19 +29,16 @@ This guide helps you download and prepare the datasets for the Face Detection & 
 
 ```bash
 # Navigate to project root
-cd "C:\Users\Admin\Downloads\Face Detection & Face Segmentation"
+cd "Face-Detection-Face-Segmentation"
 
-# Activate virtual environment
-venv\Scripts\activate
+# Activate virtual environment (Windows)
+.venv\Scripts\activate
+# or (Linux/Mac): source .venv/bin/activate
 
-# Install required packages
-pip install requests tqdm gdown
+# Install requirements
+pip install -r requirements.txt
 
-# Download WIDER FACE
-python scripts\download_wider_face.py
-
-# Download CelebAMask-HQ
-python scripts\download_celebamask.py
+# Datasets are already preprocessed in data/processed/
 ```
 
 ### Option 2: Manual Download
@@ -254,5 +251,6 @@ If you encounter issues:
 
 ---
 
-**Last Updated:** 2026-09-03  
-**Maintained by:** Project Team
+**Last Updated:** 2026-09-23  
+**Maintained by:** Project Team  
+**Status:** ✅ Datasets preprocessed & ready in `data/processed/` (CelebAMask-HQ 30K + WIDER FACE 11K)

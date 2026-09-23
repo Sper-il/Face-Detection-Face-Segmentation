@@ -1,8 +1,11 @@
 # Orchestration: Wait for Kaggle kernel -> Download -> Clean -> Finalize
 
+> **Last updated:** 2026-09-23 — Status: ✅ Phase A-F already executed. This document is kept as a historical record of the orchestration flow used to import trained weights from Kaggle.
+
 ## Phases (must run sequentially)
 
 ### Phase A: Poll kernel until COMPLETE / ERROR (BLOCKING, may take 30-60 min)
+- ✅ **DONE (2026-09-19)** — Kernel `speril/face-detection-face-segmentation` completed.
 - Run `poll_kaggle_long.py` in foreground (it already auto-exits on terminal status)
 - Read poll_log_v4.txt to see final status
 - If ERROR: download logs, analyze, STOP for user decision
@@ -14,6 +17,7 @@
   `__results__.html`, log files
 
 ### Phase C: Move models into project structure
+- ✅ **DONE** — `models/retinaface_final.pth` (84.6 MB) and `models/unet_final.pth` (118 MB) are already in place.
 - Copy/move downloaded `retinaface_best.pth` -> `models/retinaface_best.pth`
 - Copy/move downloaded `unet_best.pth` -> `models/unet_best.pth`
 - Copy/move downloaded `result.png` -> `docs/figures/result.png` (create dir)
@@ -45,10 +49,11 @@ Keep:
   `notebooks/`, `backups_v23/`
 
 ### Phase E: Finalize project (write summary)
-- Update `README.md` with training results (mIoU, AP, etc. from metrics.json)
+- ✅ **DONE (2026-09-21 → 2026-09-23)**
+- Update `README.md` with training results (mIoU, AP, etc. from metrics.json) — current: U-Net IoU=**0.9660**, RetinaFace checkpoint loaded
 - Update `ROADMAP.md` to mark milestone "trained model with 20 epochs" as done
 - Update `progress_status.md` with final status
-- Generate final `models/retinaface_best.pth` sha256 & sizes
+- Generate final `models/retinaface_final.pth` & `models/unet_final.pth` sha256 & sizes
 - Generate project tree (only top-level files, depth 2)
 - Print summary to console
 

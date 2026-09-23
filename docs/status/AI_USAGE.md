@@ -15,12 +15,31 @@ the project's working rules (`progress_status.md` §8).
 | 8 | 2026-09-21 | Cursor | Reverse-engineer retinaface_final.pth | `src/detection/retinaface.py` | Custom ResNet34+FPN+SSH backbone |
 | 9 | 2026-09-21 | Cursor | End-to-end smoke test | `scripts/kaggle/end_to_end_smoke_test.py` | Both stages forward-pass OK |
 | 10 | 2026-09-21 | Cursor | Refactor retinaface.py to support both API modes | `src/detection/retinaface.py` | Original+checkpoint classes |
-| 11 | 2026-09-21 | Cursor | Apply AI Project Framework skill | All docs updated, 67 tests pass | This entry |
+| 11 | 2026-09-21 | Cursor | Apply AI Project Framework skill | All docs updated, 67 tests pass | Framework applied |
+| 12 | 2026-09-23 | Cursor | Fix scripts/kaggle/end_to_end_smoke_test.py | REPO path + sample_dir to data/processed/segmentation | Both fixes merged |
+| 13 | 2026-09-23 | Cursor | Re-run segmentation evaluation (100 test + 100 val) | `runs/evaluation/segmentation_test_metrics.json` | IoU=0.9660, Dice=0.9824 |
+| 14 | 2026-09-23 | Cursor | Generate detection visualizations from real models | `runs/visualizations/detection/` | 8 samples from real RetinaFace |
+| 15 | 2026-09-23 | Cursor | Remove stale outputs/visualizations (from dummy data) | Cleaned | Old dummy-data visualizations deleted |
+| 16 | 2026-09-23 | Cursor | Reorganize all .md files into docs/ subfolders | All docs/guides/planning/status/references/ | 12 files moved into thematic folders |
+| 17 | 2026-09-23 | Cursor | Update README.md with current project structure | Real model perf + actual structure | Real metrics |
+| 18 | 2026-09-23 | Cursor | Update all .md files to reflect current status | progress_status, ROADMAP, PLAN, TEAM_WORK_PLAN, evaluation report, AI_USAGE | All md files now accurate |
+
+---
 
 ## Standing AI Rules
 
 - **Naming convention**: snake_case for files, PascalCase for classes, UPPER_SNAKE_CASE for constants.
-- **Folder convention**: see `progress_status.md` §8.2.
+- **Folder convention**: see `progress_status.md` §8.2 and the project structure in `README.md`.
 - **Discussion rule**: every architectural decision goes into `docs/adr/`.
 - **Edition rule**: PR review for trained models, conventional commits.
 - **Always read** the project's working rules before generating code.
+- **Always cross-check** file paths and verify file existence before referencing in docs.
+
+---
+
+## Action Statistics (2026-09-23)
+
+- **3 commits** with clear scopes: docs/ folder restructure, eval refresh, README update
+- **12 markdown files** migrated from root to `docs/{guides,planning,status,references}`
+- **8 evaluation metrics files** regenerated with real model performance
+- **23 file edits** in this session to keep docs accurate

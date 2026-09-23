@@ -29,19 +29,19 @@ Hướng dẫn này giúp bạn tải xuống và chuẩn bị dữ liệu cho d
 
 ```bash
 # Di chuyển đến thư mục project
-cd "C:\Users\Admin\Downloads\Face Detection & Face Segmentation"
+cd "Face-Detection-Face-Segmentation"
 
 # Kích hoạt môi trường ảo
-venv\Scripts\activate
+.venv\Scripts\activate   # (Windows) hoặc source .venv/bin/activate (Linux/Mac)
 
 # Cài đặt thư viện cần thiết
-pip install requests tqdm gdown
+pip install -r requirements.txt
 
 # Chạy script tải WIDER FACE (đang chạy tự động rồi!)
 python scripts\download_wider_face.py
 ```
 
-**Lưu ý**: Script đang chạy trong background và sẽ:
+**Lưu ý**: Datasets đã được tiền xử lý sẵn trong `data/processed/`. Nếu cần tải lại:
 1. Tải xuống 4 file zip (~2 GB tổng cộng)
 2. Tự động giải nén
 3. Xác minh cấu trúc thư mục
@@ -270,5 +270,5 @@ Script `download_wider_face.py` đang chạy trong background. Bạn có thể:
 
 ---
 
-**Cập nhật lần cuối**: 2026-09-03  
-**Người duy trì**: Project Team
+**Cập nhật lần cuối**: 2026-09-23
+**Trạng thái**: ✅ Datasets đã được tải & tiền xử lý xong (CelebAMask-HQ 30K + WIDER FACE 11K)

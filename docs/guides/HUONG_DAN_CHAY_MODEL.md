@@ -1,5 +1,10 @@
 # 📘 HƯỚNG DẪN CHẠY FACE DETECTION & SEGMENTATION MODEL
 
+> **Cập nhật:** 23/09/2026  
+> **Trạng thái:** ✅ Models đã train xong (U-Net IoU=0.9660, RetinaFace checkpoint loaded)
+
+---
+
 ## 🚀 CÁCH 1: CHẠY NHANH (Khuyến nghị)
 
 1. **Double-click** vào file `quick_run.bat`
@@ -16,107 +21,122 @@ Mở **Terminal** (PowerShell hoặc CMD):
 
 ```bash
 # Di chuyển đến thư mục project
-cd "C:\Users\hoait\OneDrive\Tài liệu\Face-Detection-Face-Segmentation"
+cd "Face-Detection-Face-Segmentation"
 
 # Tạo môi trường ảo
-python -m venv venv
+python -m venv .venv
 
-# Kích hoạt môi trường
-.\venv\Scripts\activate
+# Kích hoạt môi trường (Windows)
+.venv\Scripts\activate
 ```
 
 ### Bước 2: Cài đặt thư viện
 
 ```bash
-# Cài PyTorch (CPU version - không cần GPU mạnh)
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-
-# Cài các thư viện khác
-pip install opencv-python-headless tqdm PyYAML numpy pillow tensorboard matplotlib
+# Cài đặt tất cả dependencies
+pip install -r requirements.txt
 ```
 
-### Bước 3: Chạy Test Model
+### Bước 3: Chạy Smoke Test
 
 ```bash
-# Test model hoạt động chưa
+# Test cả 2 models load được không
 python scripts/kaggle/end_to_end_smoke_test.py
 ```
 
 **Kết quả mong đợi:**
 ```
-============================================================
-   MODEL TESTING SCRIPT
-============================================================
-
-TESTING FACE DETECTION MODEL
-==================================================
-[+] Using device: cpu
-[+] Detection model created successfully
-[OK] Face Detection Model: PASSED
-
-TESTING FACE SEGMENTATION MODEL
-==================================================
-[+] Segmentation output shape: torch.Size([1, 2, 224, 224])
-[OK] Face Segmentation Model: PASSED
-
-============================================================
-   TEST SUMMARY
-============================================================
-  Detection: OK PASSED
-  Segmentation: OK PASSED
-============================================================
-
-[OK] ALL TESTS PASSED! Models are ready to train.
+[smoke] wrote E:\Face-Detection-Face-Segmentation\runs\evaluation\pipeline_smoke_test.json
+[smoke] retinaface: forward ~1.0s, detector run ~0.9s
+[smoke] unet: run ~1.1s
+verdict: OK
 ```
 
 ---
 
-## 🎓 HUẤN LUYỆN MODEL (TRAINING)
+## 🎓 ĐÁNH GIÁ MODEL (EVALUATION)
 
-### Train Face Detection
+### Evaluate Segmentation (U-Net)
 
 ```bash
-python -m src.training.train_detection
+# Evaluate trên 100 ảnh test set
+python scripts/evaluation/eval_segmentation.py --split test --max-samples 100
+
+# Evaluate trên validation set
+python scripts/evaluation/eval_segmentation.py --split val --max-samples 100
 ```
 
-### Train Face Segmentation
+**Kết quả thực tế (100 test samples, 2026-09-23):**
+- Mean IoU: **0.9660**
+- Mean Dice: **0.9824**
+- Pixel Accuracy: **0.9756**
+
+### Visualize Results
 
 ```bash
-python -m src.training.train_segmentation
+# Tạo 8 samples visualization
+python scripts/inference/visualize_segmentation.py --num-samples 8
+
+# Output: runs/visualizations/test/sample_*.png + summary.png
 ```
 
 ---
 
-## 📂 CẤU TRÚC PROJECT
+## 🎨 CHẠY INFERENCE / DEMO
+
+### Demo Pipeline
+
+```bash
+python scripts/inference/demo.py --help
+```
+
+### Visualize Detection
+
+```bash
+python scripts/kaggle/end_to_end_smoke_test.py
+# Output: runs/visualizations/detection/detection_sample_*.png
+```
+
+---
+
+## 📂 CẤU TRÚC PROJECT (2026-09-23)
 
 ```
 Face-Detection-Face-Segmentation/
-├── src/
-│   ├── detection/           # Model phát hiện khuôn mặt
-│   │   ├── model.py        # DSFD Model
-│   │   └── losses.py      # Loss functions
-│   ├── segmentation/        # Model phân đoạn khuôn mặt
-│   │   ├── model.py        # FCN8s/UNet Model
-│   │   └── losses.py      # Loss functions
-│   └── training/           # Scripts huấn luyện
-│       ├── train_detection.py
-│       └── train_segmentation.py
-├── configs/                 # File cấu hình
-│   ├── detection_config.yaml
-│   └── segmentation_config.yaml
-├── scripts/                 # Scripts (theo mục đích)
-│   ├── preprocessing/        # Tiền xử lý dữ liệu
-│   ├── inference/             # Inference và demo
-│   ├── evaluation/           # Đánh giá model
-│   ├── checkpoints/           # Tiện ích checkpoint
-│   ├── kaggle/               # Tích hợp Kaggle
-│   ├── diagrams/             # Tạo sơ đồ
-│   └── misc/                 # Script khác
-├── data/                   # Dữ liệu huấn luyện
-│   ├── raw/                # Dữ liệu gốc
-│   └── processed/          # Dữ liệu đã xử lý
-├── quick_run.bat           # 🚀 Chạy nhanh
-└── requirements.txt        # Thư viện cần thiết
+├── src/                                 # Source code
+│   ├── detection/                       # RetinaFace model
+│   ├── segmentation/                    # U-Net model
+│   ├── pipeline/                        # End-to-end pipeline
+│   ├── data/                            # Datasets & preprocessing
+│   └── utils/                           # Common utilities
+│
+├── models/                              # Trained checkpoints
+│   ├── retinaface_final.pth             # 84.6 MB, 22.2M params
+│   └── unet_final.pth                   # 118.5 MB, 31.0M params
+│
+├── scripts/                             # Executable scripts
+│   ├── preprocessing/                   # Data processing
+│   ├── inference/                       # Demo & viz
+│   ├── evaluation/                      # Model evaluation
+│   ├── kaggle/                          # End-to-end test
+│   └── misc/                            # Utilities
+│
+├── tests/                               # 67 unit tests
+├── data/                                # Datasets (raw + processed)
+├── runs/                                # Runtime outputs (evaluations)
+├── notebooks/                           # Jupyter notebooks
+│
+├── docs/                                # Documentation (organized)
+│   ├── guides/                          # User guides
+│   ├── planning/                        # Plans & roadmap
+│   ├── status/                          # Progress logs
+│   ├── references/                      # Reports & research
+│   ├── adr/                             # Architecture decisions
+│   └── audit/                           # Audit reports
+│
+├── requirements.txt
+├── quick_run.bat                        # 🚀 Chạy nhanh
+└── README.md
 ```
 
 ---
@@ -125,29 +145,46 @@ Face-Detection-Face-Segmentation/
 
 | Thành phần | Yêu cầu tối thiểu |
 |------------|-------------------|
-| Python | 3.8+ |
+| Python | 3.10+ |
 | RAM | 8GB |
 | Ổ cứng | 10GB trống |
-| GPU | Không bắt buộc (chạy CPU được) |
+| GPU | Không bắt buộc (chạy CPU được, chậm hơn) |
+
+---
+
+## 📊 KẾT QUẢ EVALUATION
+
+### U-Net Segmentation
+| Metric | Test Set | Validation Set |
+|--------|----------|----------------|
+| Mean IoU | **0.9660** | **0.9766** |
+| Mean Dice | **0.9824** | **0.9880** |
+| Pixel Accuracy | 0.9756 | 0.9834 |
+
+### RetinaFace Detection
+- Checkpoint loads ✅ (84.6 MB)
+- Forward pass OK (~1s trên CPU)
+- Detection confidence score: ~1.3–1.4
+- Real WIDER mAP@0.5 metrics: pending
 
 ---
 
 ## 🐛 XỬ LÝ LỖI THƯỜNG GẶP
 
 ### Lỗi: `Module not found`
-
 ```bash
 # Cài lại thư viện
-pip install -r requirements_training.txt
+pip install -r requirements.txt
 ```
 
-### Lỗi: `CUDA out of memory`
-
-→ Model đang dùng GPU hết bộ nhớ
-→ Thử giảm batch_size trong config
+### Lỗi: `FileNotFoundError: models/retinaface_final.pth`
+```bash
+# Đảm bảo đang ở thư mục gốc project
+cd Face-Detection-Face-Segmentation
+ls models/  # Phải thấy 2 file .pth
+```
 
 ### Lỗi: `Permission denied`
-
 ```bash
 # Chạy CMD với quyền Admin
 # Hoặc kiểm tra quyền thư mục
@@ -158,9 +195,11 @@ pip install -r requirements_training.txt
 ## 📞 HỖ TRỢ
 
 Nếu gặp lỗi khác, hãy:
-1. Chụp ảnh lỗi (screenshot)
-2. Gửi cho tôi qua chat
+1. Kiểm tra `docs/guides/` cho hướng dẫn chi tiết
+2. Kiểm tra `docs/references/DANH_GIA_MODEL.md` cho evaluation report
+3. Chụp ảnh lỗi và hỏi team
 
 ---
 
-**Chúc bạn huấn luyện model thành công! 🎉**
+**Chúc bạn chạy model thành công! 🎉**  
+**Last Updated:** 23/09/2026

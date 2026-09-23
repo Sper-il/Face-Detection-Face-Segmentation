@@ -16,6 +16,15 @@ Helper scripts for the Face Detection & Segmentation project, organized by purpo
 
 ---
 
+## Status (2026-09-23)
+
+- ✅ Both checkpoints loaded: `models/retinaface_final.pth` (84.6 MB) + `models/unet_final.pth` (118.5 MB)
+- ✅ U-Net re-evaluated: **IoU=0.9660** on 100 test samples
+- ✅ All scripts run end-to-end with real trained models
+- ✅ Old dummy-data artifacts removed; new visualizations regenerated
+
+---
+
 ## Kaggle workflow (most common usage)
 
 The `kaggle/` folder holds the scripts you actually run day-to-day:

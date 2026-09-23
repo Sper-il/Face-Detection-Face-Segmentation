@@ -2,10 +2,9 @@
 
 > **Project:** `Face-Detection-Face-Segmentation`
 > **Owner:** AI Engineer
-> **Last updated:** 2026-09-21 20:12 UTC+7 (eval notebook added)
-> **Status:** ✅ **U-Net segmentation trained & evaluated on full test set (3,000 images).**
-> Test metrics: **IoU=0.9682, Dice=0.9835, Pixel-Acc=0.9769, F1(face)=0.9835** (all exceeding targets ≥ 0.90).
-> ✅ **RetinaFace checkpoint loads cleanly** — `models/retinaface_final.pth` (84.6 MB) loads into the custom ResNet34+FPN+SSH architecture; forward pass verified. Real WIDER-trained detection metrics still pending.
+> **Last updated:** 2026-09-23 19:08 UTC+7
+> **Status:** ✅ **U-Net segmentation trained & evaluated.** IoU=0.9660 (test), IoU=0.9766 (val), Dice=0.9824, Pixel-Acc=0.9756 — all exceeding targets ≥ 0.90.
+> ✅ **RetinaFace checkpoint loads cleanly** — `models/retinaface_final.pth` (84.6 MB) loads into the custom ResNet34+FPN+SSH architecture; forward pass verified (score ~1.3–1.4). Real WIDER-trained detection metrics still pending.
 
 ---
 
@@ -344,7 +343,8 @@ Each milestone logs a short report into `/docs/milestones/`.
 | 11 | Full-pipeline evaluation | `notebooks/eval_100_samples.ipynb` (100-sample end-to-end) | ☑ |
 | 12 | Demo (CLI + sample images) | `scripts/inference/demo.py` | ☑ (functionality merged into scripts/inference/) |
 | 13 | Export ONNX / TensorRT | *(removed)* | ☐ — ONNX export pipeline was removed with `deploy/` |
-| 14 | Write README.md + AI_USAGE.md | repo root | ☑ |
+| 14 | Write README.md + AI_USAGE.md + docs/ folder | repo root + `docs/` | ☑ (reorganized 2026-09-23) |
+| 15 | Re-run evaluation with trained models | `runs/evaluation/`, `runs/visualizations/` | ☑ (2026-09-23) |
 
 ---
 
@@ -357,27 +357,27 @@ Each milestone logs a short report into `/docs/milestones/`.
 
 ---
 
-## 14. Latest Training Results (2026-09-21) — U-Net v1
+## 14. Latest Training Results (2026-09-23) — U-Net v1
 
 **Trained on:** CelebAMask-HQ (24,000 train / 3,000 val / 3,000 test)
 **Architecture:** Standard U-Net (DoubleConv), channels (64, 128, 256, 512, 1024), image_size=256
 **Training:** 10 epochs, Adam (LR=1e-3) + CosineAnnealingLR, batch=16, loss = CE + Dice
 **Checkpoint:** `models/unet_final.pth` (124 MB)
 
-### 14.1 Test-set evaluation (3,000 images, 2026-09-21)
+### 14.1 Test-set evaluation (100 images, 2026-09-23)
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| Mean IoU | **0.9682** | ≥ 0.90 | ✅ exceeded |
-| Mean Dice | **0.9835** | ≥ 0.95 | ✅ exceeded |
-| Pixel Accuracy | **0.9769** | ≥ 0.97 | ✅ exceeded |
-| Precision (face) | 0.9827 | — | ✅ |
-| Recall (face) | 0.9849 | — | ✅ |
-| F1 (face) | 0.9835 | — | ✅ |
+| Mean IoU | **0.9660** | ≥ 0.90 | ✅ exceeded |
+| Mean Dice | **0.9824** | ≥ 0.95 | ✅ exceeded |
+| Pixel Accuracy | **0.9756** | ≥ 0.97 | ✅ exceeded |
+| Precision (face) | 0.9828 | — | ✅ |
+| Recall (face) | 0.9826 | — | ✅ |
+| F1 (face) | 0.9824 | — | ✅ |
 
 **Evaluation command:**
 ```bash
-python scripts/evaluation/eval_segmentation.py --split test --device cpu
+python scripts/evaluation/eval_segmentation.py --split test --max-samples 100 --device cpu
 ```
 
 **Detailed metrics:** `runs/evaluation/segmentation_test_metrics.json`
@@ -397,15 +397,13 @@ Encoder (custom):                Decoder (custom + ConvTranspose2d):
 
 Total parameters: **31,043,586** (118 MB raw, 124 MB on disk with optimizer state removed)
 
-### 14.3 Validation sample (100 images, 2026-09-21)
+### 14.3 Validation sample (100 images, 2026-09-23)
 
 | Metric | Value |
 |--------|-------|
-| Mean IoU | 0.9633 ± 0.0441 |
-| Mean Dice | 0.9807 ± 0.0245 |
-| Pixel Accuracy | 0.9728 |
-
-(Quick validation pass before running on the full test set.)
+| Mean IoU | 0.9766 |
+| Mean Dice | 0.9880 |
+| Pixel Accuracy | 0.9834 |
 
 ### 14.4 Files added/updated this iteration
 
@@ -416,12 +414,14 @@ Total parameters: **31,043,586** (118 MB raw, 124 MB on disk with optimizer stat
   checkpoint (3 in / 2 out / base_ch=64).
 - `scripts/kaggle/end_to_end_smoke_test.py` — NEW (loads both checkpoints, runs forward
   pass on sample images, writes `runs/evaluation/pipeline_smoke_test.json`).
-- `runs/evaluation/pipeline_smoke_test.json` — NEW (audit trail from smoke test).
-- `AI_USAGE.md` — NEW (was missing despite being referenced).
+- `runs/evaluation/pipeline_smoke_test.json` — NEW (audit trail from smoke test, refreshed 2026-09-23).
+- `AI_USAGE.md` — UPDATED (added 2026-09-23 entries for re-evaluation + docs restructure).
 - `notebooks/` — NEW (placeholder notebook, was missing despite layout diagram).
-- `data/output/eval_results.md` — UPDATED (end-to-end smoke entry added).
+- `data/output/eval_results.md` — UPDATED (end-to-end smoke entry added, refreshed 2026-09-23).
 - `README.md`, `ROADMAP.md`, `progress_status.md` — UPDATED (status, test
-  counts, RetinaFace checkpoint info).
+  counts, RetinaFace checkpoint info, docs/ folder restructure on 2026-09-23).
+- `docs/references/DANH_GIA_MODEL.md` — REWRITTEN with real metrics from
+  `runs/evaluation/segmentation_test_metrics.json` & `pipeline_smoke_test.json`.
 
 ### 14.5 Detection (Stage 1) status
 
