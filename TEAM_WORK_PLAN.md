@@ -36,7 +36,7 @@
 | **M4** | `src/inference/segmentor.py` | Segmentation inference |
 | **M4** | `src/inference/pipeline.py` | End-to-end pipeline |
 | **M4** | `src/inference/batch_inference.py` | Batch processing |
-| **M4** | `scripts/demo.py` | Demo CLI application |
+| **M4** | `scripts/inference/demo.py` | Demo CLI application |
 
 ---
 
@@ -250,21 +250,21 @@ face_detection_segmentation/
 **File cần làm:**
 | File | Mô tả | Trạng thái |
 |------|-------|------------|
-| `scripts/demo.py` | Demo script | ⬜ Chưa làm |
+| `scripts/inference/demo.py` | Demo script | ⬜ Chưa làm |
 
 **Yêu cầu:**
 ```bash
 # Image
-python scripts/demo.py --image input.jpg --output output.jpg
+python scripts/inference/demo.py --image input.jpg --output output.jpg
 
 # Video
-python scripts/demo.py --video input.mp4 --output output.mp4
+python scripts/inference/demo.py --video input.mp4 --output output.mp4
 
 # Webcam
-python scripts/demo.py --webcam
+python scripts/inference/demo.py --webcam
 
 # Batch folder
-python scripts/demo.py --folder input/ --output output/
+python scripts/inference/demo.py --folder input/ --output output/
 ```
 ---
 
@@ -365,7 +365,7 @@ class FacePipeline:
 - Progress bar
 - Save results (JSON + images)
 
-#### 4.9 `scripts/demo.py` - Demo Script
+#### 4.9 `scripts/inference/demo.py` - Demo Script
 **Chức năng:**
 - CLI interface cho inference
 - Support ảnh và video
@@ -375,16 +375,16 @@ class FacePipeline:
 **Cách chạy:**
 ```bash
 # Ảnh đơn
-python scripts/demo.py --image input.jpg --output output.jpg
+python scripts/inference/demo.py --image input.jpg --output output.jpg
 
 # Video
-python scripts/demo.py --video input.mp4 --output output.mp4
+python scripts/inference/demo.py --video input.mp4 --output output.mp4
 
 # Webcam
-python scripts/demo.py --webcam
+python scripts/inference/demo.py --webcam
 
 # Batch folder
-python scripts/demo.py --folder input/ --output output/
+python scripts/inference/demo.py --folder input/ --output output/
 ```
 
 ---
@@ -503,13 +503,13 @@ python scripts/eval_fddb.py --checkpoint weights/trained/detection_model.pth
 ### 6. Run Demo
 ```bash
 # Image
-python scripts/demo.py --image test.jpg --output result.jpg
+python scripts/inference/demo.py --image test.jpg --output result.jpg
 
 # Video
-python scripts/demo.py --video test.mp4 --output result.mp4
+python scripts/inference/demo.py --video test.mp4 --output result.mp4
 
 # Webcam
-python scripts/demo.py --webcam
+python scripts/inference/demo.py --webcam
 ```
 
 ---
@@ -538,7 +538,7 @@ python scripts/demo.py --webcam
 - [ ] `src/inference/segmentor.py` - Segmentation inference
 - [ ] `src/inference/pipeline.py` - End-to-end pipeline
 - [ ] `src/inference/batch_inference.py` - Batch processing
-- [ ] `scripts/demo.py` - Demo application
+- [ ] `scripts/inference/demo.py` - Demo application
 
 ---
 

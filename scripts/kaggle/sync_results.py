@@ -278,7 +278,7 @@ def main() -> None:
         print(f"  seg test  IoU={seg_test.get('iou', 'n/a'):.4f}  "
               f"Dice={seg_test.get('dice', 'n/a'):.4f}  "
               f"pixel_acc={seg_test.get('pixel_acc', 'n/a'):.4f}")
-    print("\nNext: run `python scripts/update_progress_status.py` to refresh docs.")
+    print("\nNext: run `python scripts/misc/update_progress_status.py` to refresh docs.")
 
 
 if __name__ == "__main__":

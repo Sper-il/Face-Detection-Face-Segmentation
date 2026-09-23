@@ -5,9 +5,9 @@ Sử dụng Kaggle Python API (không phụ thuộc `kaggle` CLI). Cần credent
 
 Usage::
 
-    python scripts/check_kaggle_status.py                # status + file list
-    python scripts/check_kaggle_status.py --download     # status + pull outputs
-    python scripts/check_kaggle_status.py --kernel speril/face-detection-segmentation-patched
+    python scripts/kaggle/check_kaggle_status.py                # status + file list
+    python scripts/kaggle/check_kaggle_status.py --download     # status + pull outputs
+    python scripts/kaggle/check_kaggle_status.py --kernel speril/face-detection-segmentation-patched
 """
 
 from __future__ import annotations

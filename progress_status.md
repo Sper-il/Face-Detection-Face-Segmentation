@@ -377,7 +377,7 @@ Each milestone logs a short report into `/docs/milestones/`.
 
 **Evaluation command:**
 ```bash
-python scripts/eval_segmentation.py --split test --device cpu
+python scripts/evaluation/eval_segmentation.py --split test --device cpu
 ```
 
 **Detailed metrics:** `runs/evaluation/segmentation_test_metrics.json`
@@ -414,7 +414,7 @@ Total parameters: **31,043,586** (118 MB raw, 124 MB on disk with optimizer stat
   `RetinaFaceDetector` and pipeline tests).
 - `src/segmentation/unet_model.py` — U-Net architecture matching the trained
   checkpoint (3 in / 2 out / base_ch=64).
-- `scripts/end_to_end_smoke_test.py` — NEW (loads both checkpoints, runs forward
+- `scripts/kaggle/end_to_end_smoke_test.py` — NEW (loads both checkpoints, runs forward
   pass on sample images, writes `runs/evaluation/pipeline_smoke_test.json`).
 - `runs/evaluation/pipeline_smoke_test.json` — NEW (audit trail from smoke test).
 - `AI_USAGE.md` — NEW (was missing despite being referenced).
@@ -435,7 +435,7 @@ custom ResNet34+FPN+SSH architecture (`src/detection/retinaface.py`). Forward pa
 
 **Total model size:** 22.1 M parameters (354 keys).
 
-**End-to-end smoke test:** `python scripts/end_to_end_smoke_test.py` runs both stages
+**End-to-end smoke test:** `python scripts/kaggle/end_to_end_smoke_test.py` runs both stages
 on the 3 demo sample images — results in `runs/evaluation/pipeline_smoke_test.json`.
 
 ⏳ **Real WIDER-trained detection metrics** (mAP@0.5, Recall@0.5) still pending — requires

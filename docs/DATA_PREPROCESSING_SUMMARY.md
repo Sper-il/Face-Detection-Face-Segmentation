@@ -128,7 +128,7 @@ aug_img, aug_bboxes, aug_mask = augmentor.augment(
 ---
 
 ### 5. Master Pipeline Script
-**File:** `scripts/run_preprocessing.py` (255 lines)
+**File:** `scripts/preprocessing/run_preprocessing.py` (255 lines)
 
 **Features:**
 - ✅ Orchestrates entire preprocessing workflow
@@ -244,7 +244,7 @@ pip install -r requirements_preprocessing.txt
 
 2. **Run Preprocessing Pipeline**
 ```bash
-python scripts/run_preprocessing.py
+python scripts/preprocessing/run_preprocessing.py
 ```
 Expected time: 30-60 minutes (depends on system)
 
@@ -256,7 +256,7 @@ Expected time: 30-60 minutes (depends on system)
 4. **Quality Validation**
 ```bash
 # Validation script (create if needed)
-python scripts/validate_preprocessing.py
+python scripts/preprocessing/validate_preprocessing.py
 ```
 
 ### Follow-up Tasks
@@ -335,14 +335,14 @@ Pillow>=10.0.0            # Image I/O
 2. ✅ `src/data/preprocess_celebamask_hq.py` (380 lines)
 3. ✅ `src/data/visualize_data.py` (356 lines)
 4. ✅ `src/data/augmentation.py` (339 lines)
-5. ✅ `scripts/run_preprocessing.py` (255 lines)
+5. ✅ `scripts/preprocessing/run_preprocessing.py` (255 lines)
 6. ✅ `README_PREPROCESSING.md` (458 lines)
 7. ✅ `requirements_preprocessing.txt`
 8. ✅ `docs/DATA_PREPROCESSING_SUMMARY.md` (this file)
 
 **Total Code:** ~2,000+ lines of production-ready preprocessing pipeline
 
-**Ready to Execute:** Run `python scripts/run_preprocessing.py` to begin!
+**Ready to Execute:** Run `python scripts/preprocessing/run_preprocessing.py` to begin!
 
 ---
 

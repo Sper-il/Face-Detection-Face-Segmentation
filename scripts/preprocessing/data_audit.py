@@ -15,8 +15,8 @@ summary printed to stdout.
 
 Usage::
 
-    python scripts/data_audit.py
-    python scripts/data_audit.py --data-root /kaggle/input/face-detection-data
+    python scripts/preprocessing/data_audit.py
+    python scripts/preprocessing/data_audit.py --data-root /kaggle/input/face-detection-data
 """
 
 from __future__ import annotations

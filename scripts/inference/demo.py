@@ -6,16 +6,16 @@ Run inference on images, videos, webcam feeds, or entire folders.
 Usage::
 
     # Single image
-    python scripts/demo.py --image input.jpg --output output.jpg
+    python scripts/inference/demo.py --image input.jpg --output output.jpg
 
     # Video file
-    python scripts/demo.py --video input.mp4 --output output.mp4
+    python scripts/inference/demo.py --video input.mp4 --output output.mp4
 
     # Webcam (real-time, press 'q' to quit)
-    python scripts/demo.py --webcam
+    python scripts/inference/demo.py --webcam
 
     # Batch folder
-    python scripts/demo.py --folder input/ --output output/
+    python scripts/inference/demo.py --folder input/ --output output/
 """
 
 import sys
@@ -241,10 +241,10 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
-            "  python scripts/demo.py --image photo.jpg --output result.jpg\n"
-            "  python scripts/demo.py --video clip.mp4 --output clip_out.mp4\n"
-            "  python scripts/demo.py --webcam\n"
-            "  python scripts/demo.py --folder imgs/ --output results/\n"
+            "  python scripts/inference/demo.py --image photo.jpg --output result.jpg\n"
+            "  python scripts/inference/demo.py --video clip.mp4 --output clip_out.mp4\n"
+            "  python scripts/inference/demo.py --webcam\n"
+            "  python scripts/inference/demo.py --folder imgs/ --output results/\n"
         ),
     )
 

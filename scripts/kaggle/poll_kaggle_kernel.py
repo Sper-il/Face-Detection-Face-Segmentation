@@ -4,8 +4,8 @@ Sử dụng Kaggle Python API. In log mỗi interval giây và ghi `last_status.
 
 Usage::
 
-    python scripts/poll_kaggle_kernel.py --interval 600   # check every 10 minutes
-    python scripts/poll_kaggle_kernel.py --once           # single check
+    python scripts/kaggle/poll_kaggle_kernel.py --interval 600   # check every 10 minutes
+    python scripts/kaggle/poll_kaggle_kernel.py --once           # single check
 """
 
 from __future__ import annotations

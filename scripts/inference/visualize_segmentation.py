@@ -2,7 +2,7 @@
 
 Usage::
 
-    python scripts/visualize_segmentation.py --num-samples 8
+    python scripts/inference/visualize_segmentation.py --num-samples 8
 
 Outputs PNGs to runs/visualizations/<split>/sample_XXX.png with 4 panels:
   1. Original image
