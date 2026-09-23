@@ -50,7 +50,7 @@ echo [5/5] Running Model Test...
 echo ============================================
 echo.
 
-python test_models.py
+python scripts/kaggle/end_to_end_smoke_test.py
 
 echo.
 echo ============================================

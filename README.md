@@ -133,11 +133,14 @@ Face Detection & Face Segmentation/
 │   ├── segmentation_config.yaml           # Segmentation hyperparameters
 │   └── __init__.py                        # Config loader
 │
-├── scripts/                               # Executable scripts
-│   ├── demo.py                            # Demo inference (image/video/webcam)
-│   ├── run_preprocessing.py               # Run data preprocessing
-│   ├── validate_preprocessing.py          # Validate preprocessing outputs
-│   └── test_preprocessing_quick.py        # Quick preprocessing test
+├── scripts/                               # Executable scripts (organized by purpose)
+│   ├── preprocessing/                    # Data download, validation, audit
+│   ├── inference/                        # Demo inference (image/video/webcam)
+│   ├── evaluation/                       # Model evaluation and report generation
+│   ├── checkpoints/                     # Checkpoint inspection and weights
+│   ├── kaggle/                          # Kaggle kernel polling and result sync
+│   ├── diagrams/                        # Pipeline diagram generation
+│   └── misc/                            # Maintenance scripts
 │
 ├── outputs/                               # Output results
 │   ├── logs/                              # Training logs (TensorBoard)
@@ -211,10 +214,10 @@ python src/training/train_segmentation.py --config configs/config.yaml
 
 ```bash
 # Evaluate detection model
-python scripts/evaluate.py --task detection --checkpoint weights/detection_best.pth
+python scripts/evaluation/eval_segmentation.py --split test --device cpu
 
 # Evaluate segmentation model
-python scripts/evaluate.py --task segmentation --checkpoint weights/segmentation_best.pth
+python scripts/evaluation/eval_segmentation.py --split test --device cpu
 ```
 
 ---

@@ -39,7 +39,7 @@ pip install opencv-python-headless tqdm PyYAML numpy pillow tensorboard matplotl
 
 ```bash
 # Test model hoạt động chưa
-python test_models.py
+python scripts/kaggle/end_to_end_smoke_test.py
 ```
 
 **Kết quả mong đợi:**
@@ -104,13 +104,19 @@ Face-Detection-Face-Segmentation/
 ├── configs/                 # File cấu hình
 │   ├── detection_config.yaml
 │   └── segmentation_config.yaml
+├── scripts/                 # Scripts (theo mục đích)
+│   ├── preprocessing/        # Tiền xử lý dữ liệu
+│   ├── inference/             # Inference và demo
+│   ├── evaluation/           # Đánh giá model
+│   ├── checkpoints/           # Tiện ích checkpoint
+│   ├── kaggle/               # Tích hợp Kaggle
+│   ├── diagrams/             # Tạo sơ đồ
+│   └── misc/                 # Script khác
 ├── data/                   # Dữ liệu huấn luyện
-│   └── data/
-│       └── processed/
-│           └── wider_face/
-├── test_models.py          # Script test model
+│   ├── raw/                # Dữ liệu gốc
+│   └── processed/          # Dữ liệu đã xử lý
 ├── quick_run.bat           # 🚀 Chạy nhanh
-└── requirements_training.txt # Thư viện cần thiết
+└── requirements.txt        # Thư viện cần thiết
 ```
 
 ---
