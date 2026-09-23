@@ -41,7 +41,7 @@ Keep:
 - `kernel-metadata.json`, `dataset-metadata.json`
 - `KAGGLE_RUN.md`, `KAGGLE_TRAINING_GUIDE.md`, `DETECTION_DEBUG_GUIDE.md`
 - `progress_status.md`, `README.md`, `ROADMAP.md`
-- `models/`, `data/`, `src/`, `tests/`, `demos/`, `deploy/`, `docs/`, `runs/`,
+- `models/`, `data/`, `src/`, `tests/`, `docs/`, `runs/`,
   `notebooks/`, `backups_v23/`
 
 ### Phase E: Finalize project (write summary)

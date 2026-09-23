@@ -13,7 +13,7 @@ license = {text = "MIT"}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
-exclude = ["tests*", "demos*", "notebooks*"]
+exclude = ["tests*", "notebooks*"]
 
 [tool.black]
 line-length = 100

@@ -272,6 +272,11 @@ Both `tests/test_export.py` and `deploy/export_onnx.py` use `dynamic_axes`.
 PyTorch 2.6+ prefers `dynamic_shapes` instead. The warning is benign today but
 will become an error in a future release.
 
+> **Note (2026-09-23):** `deploy/` has been removed from the project. ONNX
+> roundtrip is still covered by `tests/test_export.py` (inline). This issue
+> is moot for the deployment path but still applies to the test if/when it
+> is run with PyTorch 2.6+.
+
 ### Issue T3 — README / ROADMAP claim "51 tests" but actual is 55
 
 `README.md`, `progress_status.md` §12, `ROADMAP.md`, `AI_USAGE.md` all say 51. **Actual: 55.**
@@ -280,7 +285,7 @@ will become an error in a future release.
 
 ## Track 3 — Convention & Naming
 
-- **snake_case** for filenames — **OK** across `src/`, `tests/`, `deploy/`.
+- **snake_case** for filenames — **OK** across `src/`, `tests/`, `scripts/`.
 - **PascalCase** for classes — **OK** (`RetinaFaceDetector`, `UNetSegmentor`, `FaceSegmentationPipeline`, etc.).
 - **UPPER_SNAKE_CASE** for constants — **OK** (`IOError` in `io.py`, the `NORMALIZE_MEAN` / `NORMALIZE_STD` tuples, `FACE_LABEL_THRESHOLD`, etc.).
 - **Folder layout** matches §8.2 except:
@@ -309,7 +314,7 @@ A single stray artefact at [tests/_sample_output.png](tests/_sample_output.png).
 | [docs/adr/0001-model-choice.md](docs/adr/0001-model-choice.md) | OK | Context/Decision/Consequences/Alternatives present. |
 | [docs/adr/0002-data-format.md](docs/adr/0002-data-format.md) | OK | But see DP1 above. |
 | [docs/adr/0003-eval-logging.md](docs/adr/0003-eval-logging.md) | OK | |
-| [deploy/README.md](deploy/README.md) | Mostly OK | References `deploy/server.py` which **does not exist**. See Issue D4. |
+| `deploy/README.md` *(removed 2026-09-23)* | Resolved | Issue D4 no longer applies — deploy/ was deleted. |
 | `.cursor/skills/face-detection-segmentation/SKILL.md` + 8 references | OK | Layout intact. |
 
 ### Issue D4 — `deploy/server.py` advertised but absent
@@ -318,7 +323,18 @@ A single stray artefact at [tests/_sample_output.png](tests/_sample_output.png).
 
 ---
 
+## Track 3 — Convention & Naming
+
+> **Note (2026-09-23):** Some `deploy/` references in this section became
+> moot after the directory was removed. Historical context preserved.
+
 ## Track 5 — Dependencies & Environment
+
+> **Note (2026-09-23):** Issue E2 (FastAPI server) is resolved by removing
+> `deploy/`. The commented `fastapi`/`uvicorn` lines in `requirements.txt`
+> are kept as optional for future use.
+
+---
 
 | File | Status | Notes |
 |---|---|---|

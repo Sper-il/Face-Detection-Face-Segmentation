@@ -248,7 +248,7 @@ Face-Detection-Face-Segmentation/
 │   └── configs/
 ├── tests/                       # unit tests
 ├── notebooks/                   # EDA / experiments
-└── deploy/                      # ONNX/TensorRT export, FastAPI
+└── scripts/                     # Utility scripts (preprocessing, inference, eval, kaggle, ...)
 ```
 
 ### 8.3 Discussion Rule
@@ -342,8 +342,8 @@ Each milestone logs a short report into `/docs/milestones/`.
 | 9 | Unit tests for each module | `tests/` (67 passed) + `.github/workflows/ci.yml` | ☑ |
 | 10 | Model-level evaluation | `data/output/eval_results.md`, `notebooks/eval_100_samples.ipynb` | ☑ (full test set + 100-sample notebook) |
 | 11 | Full-pipeline evaluation | `notebooks/eval_100_samples.ipynb` (100-sample end-to-end) | ☑ |
-| 12 | Demo (CLI + sample images) | `demos/cli_demo.sh`, `demos/quick_demo.ipynb` | ☑ |
-| 13 | Export ONNX / TensorRT | `deploy/export_onnx.py` (tested roundtrip) | ☑ |
+| 12 | Demo (CLI + sample images) | `scripts/inference/demo.py` | ☑ (functionality merged into scripts/inference/) |
+| 13 | Export ONNX / TensorRT | *(removed)* | ☐ — ONNX export pipeline was removed with `deploy/` |
 | 14 | Write README.md + AI_USAGE.md | repo root | ☑ |
 
 ---

@@ -7,7 +7,7 @@ Chạy sau khi pull các file sau từ Kaggle vào workspace local:
   - runs/eval/retinaface_test_metrics.json
   - runs/eval/unet_test_metrics.json
   - result.png
-  - demos/output/vis/test_*.png
+  - scripts/inference/demo.py outputs (test_*.png in runs/)
 
 Output:
   - models/retinaface_demo.pth + models/unet_demo.pth (hash đã cập nhật)

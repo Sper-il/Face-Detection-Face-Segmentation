@@ -5,7 +5,7 @@ the project's working rules (`progress_status.md` §8).
 
 | # | Date | Tool | Task | Outcome | Notes |
 |---|------|------|------|---------|-------|
-| 1 | 2026-09-15 | Cursor | Initial repo scaffold | Created `src/`, `tests/`, `demos/`, `deploy/`, `docs/` | Setup follow progress_status.md template |
+| 1 | 2026-09-15 | Cursor | Initial repo scaffold | Created `src/`, `tests/`, `docs/` | Setup follow progress_status.md template |
 | 2 | 2026-09-15 | Cursor | Implement RetinaFace model | `src/detection/retinaface.py` | Based on InsightFace reference |
 | 3 | 2026-09-15 | Cursor | Implement U-Net model | `src/segmentation/unet.py` | ResNet-34 encoder + standard decoder |
 | 4 | 2026-09-15 | Cursor | Build pipeline orchestrator | `src/pipeline/orchestrator.py` | Graceful degradation on no-face |

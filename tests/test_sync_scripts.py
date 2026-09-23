@@ -15,11 +15,19 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
+SCRIPTS_KAGGLE = SCRIPTS / "kaggle"
+SCRIPTS_MISC = SCRIPTS / "misc"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
+if str(SCRIPTS_KAGGLE) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_KAGGLE))
+if str(SCRIPTS_MISC) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_MISC))
 
-import sync_results  # noqa: E402
-import update_progress_status  # noqa: E402
+# Path manipulation above lets us import the helper scripts in-place from
+# their new locations after the scripts/ reorganization.
+import sync_results  # noqa: E402,F401  (loaded as module file directly)
+import update_progress_status  # noqa: E402,F401
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -107,7 +115,8 @@ def test_check_kaggle_status_reports_missing_kaggle_sdk(
     monkeypatch.setattr(_builtins, "__import__", _fake_import)
     # Avoid argparse trying to parse pytest's argv.
     monkeypatch.setattr("sys.argv", ["check_kaggle_status.py"])
-    from check_kaggle_status import main as ck_main
+    import importlib
+    ck_main = importlib.import_module("check_kaggle_status").main
     with pytest.raises(SystemExit) as exc_info:
         ck_main()
     assert exc_info.value.code == 2

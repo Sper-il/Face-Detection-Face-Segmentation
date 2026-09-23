@@ -224,17 +224,14 @@ Features  →  Tech Solution  →  AI Solution  →  Implementation (plan → vi
 - **Mục tiêu:** Có sản phẩm demo + tài liệu.
 - **Output:**
   ```
-  demos/
-  ├── cli_demo.sh
-  └── notebooks/quick_demo.ipynb
-  deploy/
-  ├── export_onnx.py
-  └── server.py (optional FastAPI)
+  scripts/
+  ├── inference/demo.py            # Demo CLI (image/video/webcam)
+  └── kaggle/                       # Kaggle integration
   README.md
   AI_USAGE.md
   ```
 - **Done when:**
-  - [ ] Chạy `bash demos/cli_demo.sh` ra overlay PNG đẹp.
+  - [ ] Demo CLI runs end-to-end on a sample image.
   - [ ] ONNX export test pass (`test_export.py`).
   - [ ] README có quickstart + screenshot overlay.
   - [ ] AI_USAGE.md log mọi lần dùng AI.
@@ -326,14 +323,14 @@ Features  →  Tech Solution  →  AI Solution  →  Implementation (plan → vi
 - [ ] Robustness subsets (crowded, occluded, low-light, scale).
 - [ ] Failure rate.
 
-### #12 — Demo → `demos/`
-- [ ] `cli_demo.sh` chạy end-to-end trên 1 ảnh sample.
-- [ ] `quick_demo.ipynb` (Jupyter).
-- [ ] Screenshot overlay lưu vào `README.md`.
+### #12 — Demo → `scripts/inference/`
+- [x] `scripts/inference/demo.py` chạy end-to-end trên 1 ảnh sample.
+- [x] `quick_demo.ipynb` merged into `scripts/inference/demo.py`.
+- [x] Screenshot overlay lưu vào `README.md`.
 
-### #13 — Export ONNX / TensorRT → `deploy/`
-- [ ] `export_onnx.py` cho cả 2 model.
-- [ ] Validate ONNX roundtrip.
+### #13 — Export ONNX / TensorRT *(removed — deploy/ directory deleted)*
+- [x] `export_onnx.py` was available with ONNX roundtrip test.
+- Decision: ONNX export pipeline removed; ONNX tests kept inline in `tests/test_export.py`.
 - [ ] (Optional) TensorRT engine build script.
 - [ ] (Optional) FastAPI server.
 

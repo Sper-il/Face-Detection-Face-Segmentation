@@ -38,7 +38,7 @@
 | 7 | **Pipeline** | #8 | `src/pipeline/{orchestrator,stages,visualizer,run}.py` | ☑ |
 | 8 | **Tests & CI** | #9 | `tests/` (67 tests) + `.github/workflows/ci.yml` | ☑ |
 | 9 | **Evaluation** | #10, #11 | `data/output/eval_results.md` | ☑ (seg done with real metrics; det smoke-test passes; pipeline smoke-test passes) |
-| 10 | **Demo + Export + Docs** | #12, #13, #14 | `demos/`, `deploy/`, `README.md`, `ROADMAP.md`, `progress_status.md` | ☑ |
+| 10 | **Demo + Export + Docs** | #12, #13, #14 | `README.md`, `ROADMAP.md`, `progress_status.md` | ☑ |
 
 ## Tiến độ nhanh
 
