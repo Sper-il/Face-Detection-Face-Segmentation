@@ -19,7 +19,7 @@ import numpy as np
 import torch
 import cv2
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
 
 
 def load_unet_for_inference(weights_path: Path, device: str = "cpu"):
@@ -125,7 +125,7 @@ def main() -> int:
     lmk_shapes = [x.shape for x in out["lmk_deltas"]]
 
     # ---------- Run detector on a sample ----------
-    sample_dir = REPO / "demos" / "sample_images"
+    sample_dir = REPO / "data" / "processed" / "segmentation" / "val" / "images"
     sample_files = sorted(sample_dir.glob("*.png"))
     if not sample_files:
         # Synthesize a tiny test image so the smoke test always runs.
