@@ -1,424 +1,278 @@
 # Face Detection & Face Segmentation
 
-**Real-time face detection and segmentation system for security cameras and crowd monitoring applications**
+**Real-time face detection and segmentation system using RetinaFace + U-Net for security cameras and crowd monitoring applications.**
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange)](https://pytorch.org/)
-[![Status](https://img.shields.io/badge/Status-Data%20Preprocessing%20Complete-green)](./docs/references/DATA_PREPROCESSING_SUMMARY.md)
+[![Status](https://img.shields.io/badge/Status-Models%20Trained-brightgreen)](./docs/status/progress_status.md)
 
 ---
 
-## 📋 Description
+## 🎯 Model Performance
 
-This project tackles two critical computer vision tasks:
+### Trained Checkpoints
+| Model | File | Size | Params |
+|-------|------|------|--------|
+| **RetinaFace** (Detection) | `models/retinaface_final.pth` | 84.6 MB | 22.2M |
+| **U-Net** (Segmentation) | `models/unet_final.pth` | 118.5 MB | 31.0M |
 
-1. **Face Detection**: Detect multiple faces in crowded scenes with high accuracy
-2. **Face Segmentation**: Generate precise face masks for detected faces
+### Evaluation Results
 
-**Target Application**: Security camera systems requiring real-time face detection and segmentation in crowds.
+#### Segmentation (U-Net)
+| Metric | Test Set | Validation Set |
+|--------|----------|----------------|
+| **Mean IoU** | **0.9660** | **0.9766** |
+| **Mean Dice** | **0.9824** | **0.9880** |
+| **Pixel Accuracy** | 0.9756 | 0.9834 |
 
----
+#### Detection (RetinaFace)
+| Metric | Value |
+|--------|-------|
+| Forward Pass (640×640) | ~0.98s (CPU) |
+| Smoke Test | ✅ Pass |
 
-## 🎯 Goal & Purpose
-
-### Primary Objectives
-- Detect faces in crowded scenes with **>95% accuracy**
-- Generate precise segmentation masks with **>85% IoU**
-- Achieve **real-time inference** (<50ms per frame)
-- Handle challenging conditions: occlusion, lighting variations, multiple scales
-
-### Success Criteria
-| Metric | Target | Current |
-|--------|--------|---------|
-| Detection mAP@0.5 | >0.95 | TBD |
-| Segmentation IoU | >0.85 | TBD |
-| Inference Time | <50ms | TBD |
-| FPS (Full Pipeline) | >20 | TBD |
-
----
-
-## 🏗️ Pipeline Architecture
-
-```
-Input Image
-    ↓
-Preprocessing (Resize, Normalize)
-    ↓
-Face Detection Model
-    ├─→ Bounding Boxes
-    └─→ Confidence Scores
-    ↓
-Face Segmentation Model
-    ├─→ Face Masks (19 parts)
-    └─→ Segmentation Map
-    ↓
-Post-processing (NMS, Filtering)
-    ↓
-Output: Detected Faces + Segmentation Masks
-```
-
-### Why This Architecture?
-
-**Detection Stage:**
-- Uses state-of-the-art detection model
-- Trained on WIDER FACE dataset (diverse scenes)
-
-**Segmentation Stage:**
-- Encoder-decoder architecture
-- Trained on CelebAMask-HQ (19 facial parts)
-
----
-
-## 📊 Dataset Summary
-
-### ✅ Preprocessing Complete (Sep 4, 2026)
-
-| Dataset | Images | Splits | Status |
-|---------|--------|--------|--------|
-| **CelebAMask-HQ** | 30,000 | 70/15/15 | ✅ Complete |
-| **WIDER FACE** | 11,030 | Train/Val | ✅ Complete |
-
-**Total Processed**: 41,030 images (~8.5 GB)
-
-#### CelebAMask-HQ Details
-- **Purpose**: Face segmentation training
-- **Quality**: 100% retention, 71% avg mask coverage
-- **Parts**: 19 facial components (skin, eyes, nose, lips, hair, etc.)
-- **Splits**: 21,087 train / 4,454 val / 4,459 test
-
-#### WIDER FACE Details
-- **Purpose**: Face detection training
-- **Quality**: 68.48% retention after aggressive filtering
-- **Faces**: 67,088 valid faces (53,616 train / 13,472 val)
-- **Filtering**: Removed blur, small faces (<10px), invalid boxes
-
-See [docs/references/DATA_PREPROCESSING_SUMMARY.md](./docs/references/DATA_PREPROCESSING_SUMMARY.md) for detailed statistics.
+See [docs/references/DANH_GIA_MODEL.md](./docs/references/DANH_GIA_MODEL.md) for detailed evaluation.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-Face Detection & Face Segmentation/
+Face-Detection-Face-Segmentation/
 │
-├── src/
-│   ├── detection/                          # Face Detection
-│   │   ├── model.py                       # Detection model (DSFD-based)
-│   │   ├── losses.py                      # Loss functions (Focal, SmoothL1, GIoU)
-│   │   └── __init__.py
-│   │
-│   ├── segmentation/                       # Face Segmentation
-│   │   ├── model.py                       # Segmentation model (FCN8s-based)
-│   │   ├── unet.py                        # Alternative segmentation model (U-Net)
-│   │   ├── losses.py                      # Loss functions (Dice, Focal, Combined)
-│   │   └── __init__.py
-│   │
-│   ├── training/                          # Training scripts
-│   │   ├── train_detection.py             # Train detection model
-│   │   ├── train_segmentation.py          # Train segmentation model
-│   │   └── __init__.py
-│   │
-│   ├── evaluation/                        # Evaluation
-│   │   ├── metrics.py                     # Metric calculations (mAP, IoU, Dice)
-│   │   └── __init__.py
-│   │
-│   └── inference/                         # Inference scripts
-│       ├── detector.py                    # Detection inference
-│       ├── segmentor.py                   # Segmentation inference
-│       ├── pipeline.py                    # End-to-end pipeline
-│       └── batch_inference.py             # Batch processing
+├── src/                                 # Source code
+│   ├── configs/                        # Config loaders
+│   ├── data/                           # Dataset classes & loaders
+│   ├── detection/                      # RetinaFace detection model
+│   │   ├── retinaface.py              # Main model
+│   │   ├── backbone.py                # Backbone networks
+│   │   ├── anchors.py                 # Anchor generation
+│   │   └── losses.py                  # Detection losses
+│   ├── segmentation/                   # Segmentation models
+│   │   ├── unet.py                    # U-Net implementation
+│   │   ├── unet_model.py              # UNet with ResNet encoder
+│   │   └── losses.py                  # Segmentation losses
+│   ├── pipeline/                       # End-to-end pipeline
+│   │   ├── orchestrator.py            # Pipeline coordinator
+│   │   ├── stages.py                  # Processing stages
+│   │   └── visualizer.py             # Visualization
+│   ├── inference/                      # Inference utilities
+│   ├── evaluation/                    # Evaluation metrics
+│   ├── training/                      # Training utilities
+│   └── utils/                         # Common utilities
 │
-├── configs/                               # Configuration files
-│   ├── detection_config.yaml              # Detection hyperparameters
-│   ├── segmentation_config.yaml           # Segmentation hyperparameters
-│   └── __init__.py                        # Config loader
+├── models/                             # Trained model checkpoints
+│   ├── retinaface_final.pth           # Detection model
+│   └── unet_final.pth                 # Segmentation model
 │
-├── scripts/                               # Executable scripts (organized by purpose)
-│   ├── preprocessing/                    # Data download, validation, audit
-│   ├── inference/                        # Demo inference (image/video/webcam)
-│   ├── evaluation/                       # Model evaluation and report generation
-│   ├── checkpoints/                     # Checkpoint inspection and weights
-│   ├── kaggle/                          # Kaggle kernel polling and result sync
-│   ├── diagrams/                        # Pipeline diagram generation
-│   └── misc/                            # Maintenance scripts
+├── configs/                            # Configuration files
+│   ├── detection_config.yaml
+│   └── segmentation_config.yaml
 │
-├── outputs/                               # Output results
-│   ├── logs/                              # Training logs (TensorBoard)
-│   ├── metrics/                           # Evaluation metrics (JSON/CSV)
-│   └── visualizations/                    # Visualization results
+├── scripts/                            # Executable scripts
+│   ├── preprocessing/                 # Data download & preprocessing
+│   │   ├── run_preprocessing.py
+│   │   ├── validate_preprocessing.py
+│   │   └── data_audit.py
+│   ├── inference/                     # Inference scripts
+│   │   ├── demo.py                    # CLI demo
+│   │   ├── visualize_segmentation.py
+│   │   └── inference_retinaface_yakhyo.py
+│   ├── evaluation/                    # Model evaluation
+│   │   ├── eval_segmentation.py
+│   │   ├── generate_report_figures.py
+│   │   └── test_unet_image.py
+│   ├── checkpoints/                   # Checkpoint utilities
+│   ├── diagrams/                      # Pipeline diagrams
+│   ├── kaggle/                       # Kaggle integration
+│   │   ├── sync_results.py
+│   │   ├── check_kaggle_status.py
+│   │   └── end_to_end_smoke_test.py
+│   └── misc/                         # Utilities
+│       └── update_progress_status.py
 │
-├── docs/                                  # Documentation (all guides, plans, reports)
-│   ├── guides/                            # User-facing how-tos
-│   ├── planning/                          # Project plans & roadmap
-│   ├── status/                            # Progress logs & AI usage
-│   ├── references/                        # Research notes & summaries
-│   ├── adr/                               # Architecture Decision Records
-│   ├── audit/                             # Audit reports
-│   └── plan/                              # Implementation plan
+├── tests/                              # Unit tests (67 tests)
+│   ├── test_detection_inference.py
+│   ├── test_segmentation_inference.py
+│   ├── test_pipeline.py
+│   ├── test_export.py                 # ONNX export tests
+│   └── ...
 │
-├── data/
-│   ├── raw/                               # Original datasets
-│   └── processed/                         # Preprocessed data
-│       ├── celebamask_hq/
-│       └── wider_face/
+├── data/                               # Data directory
+│   ├── raw/                          # Original datasets
+│   └── processed/                    # Preprocessed data
+│       ├── detection/                # WIDER FACE (train/val/test)
+│       └── segmentation/              # CelebAMask-HQ (train/val/test)
 │
-├── requirements.txt                       # Dependencies
-├── requirements_preprocessing.txt         # Preprocessing-only dependencies
-├── quick_run.bat                          # Quick setup & run script (Windows)
-└── README.md                              # This file
+├── runs/                              # Runtime outputs
+│   ├── evaluation/                   # Evaluation results
+│   │   ├── segmentation_test_metrics.json
+│   │   ├── pipeline_smoke_test.json
+│   │   └── visualizations/
+│   └── visualizations/               # Prediction visualizations
+│       ├── detection/
+│       └── test/
+│
+├── notebooks/                         # Jupyter notebooks
+│   └── eval_100_samples.ipynb         # 100-sample evaluation
+│
+├── outputs/                           # Output artifacts
+│
+├── docs/                              # Documentation
+│   ├── guides/                       # User guides
+│   │   ├── DATASET_DOWNLOAD_GUIDE.md
+│   │   ├── HUONG_DAN_CHAY_MODEL.md
+│   │   ├── HUONG_DAN_TAI_DATASET.md
+│   │   └── TEMPLATE_HUONG_DAN.md
+│   ├── planning/                     # Project plans
+│   │   ├── PLAN.md
+│   │   ├── ROADMAP.md
+│   │   └── TEAM_WORK_PLAN.md
+│   ├── status/                       # Status & logs
+│   │   ├── progress_status.md
+│   │   └── AI_USAGE.md
+│   ├── references/                   # Research & references
+│   │   ├── DANH_GIA_MODEL.md
+│   │   ├── DATA_PREPROCESSING_SUMMARY.md
+│   │   └── survey.md
+│   ├── adr/                         # Architecture Decision Records
+│   ├── audit/                       # Audit reports
+│   └── plan/                        # Implementation details
+│
+├── configs/                          # YAML configs
+├── .github/                          # GitHub Actions CI
+├── .venv/                           # Python virtual environment
+│
+├── pyproject.toml                    # Python project config
+├── requirements.txt                  # Dependencies
+├── requirements_preprocessing.txt    # Preprocessing deps
+├── quick_run.bat                     # Quick start script (Windows)
+└── README.md                         # This file
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Environment Setup
+### 1. Setup Environment
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd "Face Detection & Face Segmentation"
+# Clone and enter repo
+git clone https://github.com/Sper-il/Face-Detection-Face-Segmentation.git
+cd Face-Detection-Face-Segmentation
 
-# Create virtual environment
-python -m venv venv
+# Create and activate venv (Windows)
+python -m venv .venv
+.venv\Scripts\activate
 
-# Activate (Windows)
-.\venv\Scripts\Activate.ps1
-
-# Activate (Linux/Mac)
-source venv/bin/activate
+# Or on Linux/Mac
+python -m venv .venv
+source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Data Preprocessing (✅ Already Complete)
+### 2. Run Inference Demo
 
 ```bash
-# CelebAMask-HQ preprocessing
-python src/data/preprocess_celebamask_hq.py
+# Segment faces on test images
+python scripts/inference/demo.py --input data/processed/segmentation/test/images/00007.jpg
 
-# WIDER FACE preprocessing
-python src/data/preprocess_wider_face.py
+# Visualize segmentation results
+python scripts/inference/visualize_segmentation.py --num-samples 8
+
+# Run pipeline smoke test
+python scripts/kaggle/end_to_end_smoke_test.py
 ```
 
-### 3. Model Training (Next Step)
+### 3. Evaluate Models
 
 ```bash
-# Train detection model
-python src/training/train_detection.py --config configs/config.yaml
+# Evaluate segmentation on test set
+python scripts/evaluation/eval_segmentation.py --split test --max-samples 100
 
-# Train segmentation model
-python src/training/train_segmentation.py --config configs/config.yaml
-```
-
-### 4. Evaluation
-
-```bash
-# Evaluate detection model
-python scripts/evaluation/eval_segmentation.py --split test --device cpu
-
-# Evaluate segmentation model
-python scripts/evaluation/eval_segmentation.py --split test --device cpu
+# Evaluate on validation set
+python scripts/evaluation/eval_segmentation.py --split val
 ```
 
 ---
 
-## 🔧 Dependencies
+## 📊 Dataset Summary
 
-### Core Libraries
-- Python 3.8+
-- PyTorch 2.0+
-- torchvision
-- OpenCV (cv2)
-- NumPy
-- Pillow (PIL)
+| Dataset | Images | Purpose | Status |
+|---------|--------|---------|--------|
+| **CelebAMask-HQ** | 30,000 | Face Segmentation | ✅ Ready |
+| **WIDER FACE** | 11,030 | Face Detection | ✅ Ready |
 
-### Additional Tools
-- tqdm (progress bars)
-- matplotlib (visualization)
-- seaborn (plots)
-- tensorboard (training logs)
-- albumentations (data augmentation)
-
-See `requirements.txt` for complete list.
+See [docs/references/DATA_PREPROCESSING_SUMMARY.md](./docs/references/DATA_PREPROCESSING_SUMMARY.md) for details.
 
 ---
 
-## 📈 Implementation Plan
+## 🏗️ Pipeline Architecture
 
-### ✅ Phase 1: Data Preparation (COMPLETE)
-- [x] Download datasets (CelebAMask-HQ, WIDER FACE)
-- [x] Preprocess CelebAMask-HQ (30,000 images + masks)
-- [x] Preprocess WIDER FACE (11,030 images)
-- [x] Quality filtering (blur, size, validation)
-- [x] Create train/val/test splits
-- [x] Generate statistics and documentation
+```
+Input Image → Preprocessing → RetinaFace (Detection) → Bounding Boxes
+                                                        ↓
+                                    U-Net (Segmentation) ← Face Crops
+                                                        ↓
+                                    Output: Bboxes + Face Masks + Overlay
+```
 
-### 🔄 Phase 2: Model Development (IN PROGRESS)
-- [ ] Implement detection model
-  - [ ] Model architecture
-  - [ ] Loss functions
-  - [ ] Training pipeline
-- [ ] Implement segmentation model
-  - [ ] Model architecture
-  - [ ] Loss functions
-  - [ ] Training pipeline
+### Model Details
 
-### ⏳ Phase 3: Training & Optimization
-- [ ] Train detection model on WIDER FACE
-  - [ ] Target: mAP@0.5 > 0.95
-- [ ] Train FCN model on CelebAMask-HQ
-  - [ ] Target: IoU > 0.90
-- [ ] Hyperparameter tuning
-- [ ] Model optimization (pruning, quantization)
-- [ ] Validation and early stopping
+**RetinaFace (Detection)**
+- Multi-scale feature extraction
+- Anchor-based detection heads
+- Landmark prediction (5 points per face)
 
-### ⏳ Phase 4: Evaluation & Testing
-- [ ] Model-level evaluation
-  - Detection: mAP, precision, recall
-  - Segmentation: IoU, dice coefficient
-- [ ] Pipeline-level evaluation
-  - End-to-end latency
-  - Throughput (FPS)
-  - Resource usage
-- [ ] Edge case testing
-  - Occlusion, lighting, multiple faces
-  - Small faces, profile views
-
-### ⏳ Phase 5: Demo & Deployment
-- [ ] Build demo interface
-- [ ] Real-time video pipeline
-- [ ] Performance profiling
-- [ ] Documentation and user guide
+**U-Net (Segmentation)**
+- ResNet-34 encoder (pretrained)
+- Skip connections for boundary preservation
+- 19-class facial part segmentation
 
 ---
 
-## 🧪 Evaluation Framework
+## 🧪 Testing
 
-### Model-Level Metrics
+```bash
+# Run all tests
+pytest tests/ -v
 
-**Detection Model:**
-- mAP@0.5, mAP@0.75
-- Precision, Recall, F1
-- Per-class performance
-- Inference time per image
+# Run with coverage
+pytest tests/ --cov=src --cov-report=term-missing
 
-**Segmentation Model:**
-- Mean IoU (19 classes)
-- Pixel accuracy
-- Dice coefficient
-- Boundary F-score
-- Inference time per image
-
-### Pipeline-Level Metrics
-
-**End-to-End Performance:**
-- Total latency (preprocessing + detection + segmentation + postprocessing)
-- Throughput (frames per second)
-- Resource utilization (CPU, GPU, RAM)
-- Failure rate and error handling
-
-**Target Benchmarks:**
-| Metric | Target | Hardware |
-|--------|--------|----------|
-| E2E Latency | <100ms | RTX 3060 |
-| FPS | >20 | RTX 3060 |
-| GPU Memory | <4GB | RTX 3060 |
+# Run specific test
+pytest tests/test_pipeline.py -v
+```
 
 ---
 
-## 🔬 Technical Decisions & Rationale
+## 📈 Training History
 
-### Why This Architecture?
-
-**Detection:**
-- Optimized for face detection tasks
-- Proven on WIDER FACE benchmark
-
-**Segmentation:**
-- Encoder-decoder architecture
-- Accurate boundary detection
-- **Proven baselines**: Both models have proven results
-- **Flexibility**: Can swap models or fine-tune separately
-- **Optimization potential**: Can quantize/prune for deployment
+| Model | Epochs | Final Loss | Best Metric |
+|-------|--------|------------|-------------|
+| RetinaFace | 100 | TBD | mAP@0.5 > 0.95 (target) |
+| U-Net | 100 | TBD | IoU 0.9766 (val) |
 
 ---
 
-## 📚 References
+## 📝 Documentation
 
-### Datasets
-- **WIDER FACE**: Yang, S., Luo, P., Loy, C. C., & Tang, X. (2016). WIDER FACE: A Face Detection Benchmark
-- **CelebAMask-HQ**: Lee, C. H., Liu, Z., Wu, L., & Luo, P. (2020). MaskGAN: Towards Diverse and Interactive Facial Image Manipulation
-
----
-
-## 📝 Naming Conventions
-
-### Models
-- Format: `{task}_{architecture}_{version}.{ext}`
-- Example: `detection_model_v1.pt`, `segmentation_model_v2.pth`
-
-### Datasets
-- Format: `{purpose}_{date}.{ext}`
-- Example: `training_faces_20260904.zip`
-
-### Scripts
-- Format: `{action}_{target}.py`
-- Example: `train_model.py`, `evaluate_pipeline.py`
-
-### Configs
-- Format: `{component}_config.yaml`
-- Example: `detection_config.yaml`, `training_config.yaml`
+| Document | Path | Description |
+|----------|------|-------------|
+| Evaluation Report | `docs/references/DANH_GIA_MODEL.md` | Model evaluation results |
+| Progress Status | `docs/status/progress_status.md` | Project progress |
+| Running Guide | `docs/guides/HUONG_DAN_CHAY_MODEL.md` | How to run models |
+| Dataset Guide | `docs/guides/DATASET_DOWNLOAD_GUIDE.md` | Data download instructions |
 
 ---
 
-## 🤝 Contributing
+## 🤝 Team
 
-This is an academic project for computer vision research and education.
-
----
-
-## 📄 License
-
-[Add your license here]
+See [docs/planning/TEAM_WORK_PLAN.md](./docs/planning/TEAM_WORK_PLAN.md) for team assignments.
 
 ---
 
-## 📞 Contact
-
-[Add contact information]
-
----
-
-## 🗓️ Project Timeline
-
-| Phase | Start | End | Status |
-|-------|-------|-----|--------|
-| Data Preparation | Sep 3, 2026 | Sep 4, 2026 | ✅ Complete |
-| Model Development | Sep 4, 2026 | TBD | 🔄 In Progress |
-| Training | TBD | TBD | ⏳ Pending |
-| Evaluation | TBD | TBD | ⏳ Pending |
-| Demo & Deployment | TBD | TBD | ⏳ Pending |
-
----
-
-**Last Updated**: Sep 4, 2026 7:37 PM (UTC+7)  
-**Status**: ✅ Data Preprocessing Complete → 🔄 Model Development Phase → 👥 Team Assigned
-
----
-
-## 👥 TEAM STRUCTURE
-
-See [docs/planning/TEAM_WORK_PLAN.md](./docs/planning/TEAM_WORK_PLAN.md) for detailed task assignments.
-
-| Member | Role | Responsibility |
-|--------|------|----------------|
-| **Member 1** | Detection | Detection Model + Training (WIDER FACE) |
-| **Member 2** | Segmentation | Segmentation Model + Training (CelebAMask-HQ) |
-| **Member 3** | Data | Data Pipeline + Loaders + Augmentation |
-| **Member 4** | Integration | Evaluation + Inference Pipeline + Demo |
-
-### Models
-- **Detection**: State-of-the-art face detection
-- **Segmentation**: Encoder-decoder segmentation (19 parts)
+**Last Updated**: September 23, 2026  
+**Status**: ✅ Models Trained → 📊 Evaluation Complete
