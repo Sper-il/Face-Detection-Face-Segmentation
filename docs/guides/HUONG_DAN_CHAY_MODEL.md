@@ -66,10 +66,10 @@ python scripts/evaluation/eval_segmentation.py --split test --max-samples 100
 python scripts/evaluation/eval_segmentation.py --split val --max-samples 100
 ```
 
-**Kết quả thực tế (100 test samples, 2026-09-23):**
-- Mean IoU: **0.9660**
-- Mean Dice: **0.9824**
-- Pixel Accuracy: **0.9756**
+**Kết quả thực tế (100 test samples, 2026-09-25):**
+- Mean IoU: **0.9679**
+- Mean Dice: **0.9834**
+- Pixel Accuracy: **0.9770**
 
 ### Visualize Results
 
@@ -157,14 +157,15 @@ Face-Detection-Face-Segmentation/
 ### U-Net Segmentation
 | Metric | Test Set | Validation Set |
 |--------|----------|----------------|
-| Mean IoU | **0.9660** | **0.9766** |
-| Mean Dice | **0.9824** | **0.9880** |
-| Pixel Accuracy | 0.9756 | 0.9834 |
+| Mean IoU | **0.9679** | **0.9666** |
+| Mean Dice | **0.9834** | **0.9826** |
+| Pixel Accuracy | **0.9770** | **0.9756** |
 
 ### RetinaFace Detection
 - Checkpoint loads ✅ (84.6 MB)
-- Forward pass OK (~1s trên CPU)
-- Detection confidence score: ~1.3–1.4
+- Forward pass OK (~0.56s trên CPU)
+- Detector run ~0.44s với post-processing
+- Top score: **1.42**
 - Real WIDER mAP@0.5 metrics: pending
 
 ---
@@ -202,4 +203,4 @@ Nếu gặp lỗi khác, hãy:
 ---
 
 **Chúc bạn chạy model thành công! 🎉**  
-**Last Updated:** 23/09/2026
+**Last Updated:** 23/09/2026 (re-evaluated 25/09/2026: IoU=0.9679, Dice=0.9834)

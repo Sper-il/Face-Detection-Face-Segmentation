@@ -23,6 +23,8 @@ the project's working rules (`progress_status.md` §8).
 | 16 | 2026-09-23 | Cursor | Reorganize all .md files into docs/ subfolders | All docs/guides/planning/status/references/ | 12 files moved into thematic folders |
 | 17 | 2026-09-23 | Cursor | Update README.md with current project structure | Real model perf + actual structure | Real metrics |
 | 18 | 2026-09-23 | Cursor | Update all .md files to reflect current status | progress_status, ROADMAP, PLAN, TEAM_WORK_PLAN, evaluation report, AI_USAGE | All md files now accurate |
+| 19 | 2026-09-25 | Cursor | Fix all evaluation scripts (defaults + paths) | `src/eval.py`, `notebooks/eval_100_samples.ipynb`, eval scripts | All evals use real trained models & real data |
+| 20 | 2026-09-25 | Cursor | Re-run full evaluation pipeline | `runs/evaluation/`, `runs/visualizations/` | IoU=**0.9679** test, **0.9666** val |
 
 ---
 
@@ -37,9 +39,12 @@ the project's working rules (`progress_status.md` §8).
 
 ---
 
-## Action Statistics (2026-09-23)
+## Action Statistics (2026-09-25)
 
-- **3 commits** with clear scopes: docs/ folder restructure, eval refresh, README update
-- **12 markdown files** migrated from root to `docs/{guides,planning,status,references}`
-- **8 evaluation metrics files** regenerated with real model performance
-- **23 file edits** in this session to keep docs accurate
+- **Evaluation re-run** with real models and real data:
+  - **Segmentation test:** IoU=**0.9679**, Dice=**0.9834**, PixelAcc=**0.9770**
+  - **Segmentation val:** IoU=**0.9666**, Dice=**0.9826**, PixelAcc=**0.9756**
+  - **RetinaFace smoke:** forward 0.56s, detector 0.44s, top_score 1.42
+  - **Visualizations:** 8 new samples in `runs/visualizations/test/`
+- **3 commits** this session: docs sync, eval fix, eval re-run
+- **Files updated:** 6 markdown files + 3 JSON metric files + 8 PNG visualizations

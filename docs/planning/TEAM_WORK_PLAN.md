@@ -16,7 +16,7 @@
 | Segmentation model code | ✅ Hoàn thành | `src/segmentation/{unet,unet_model}.py` |
 | Pipeline orchestrator | ✅ Hoàn thành | `src/pipeline/{orchestrator,stages,visualizer,run}.py` |
 | Tests (67 tests) + CI | ✅ Hoàn thành | `tests/` + `.github/workflows/ci.yml` |
-| Train U-Net | ✅ Hoàn thành | IoU=**0.9660** test, **0.9766** val |
+| Train U-Net | ✅ Hoàn thành | IoU=**0.9679** test, **0.9666** val |
 | Load RetinaFace | ✅ Hoàn thành | 84.6MB checkpoint verified |
 | End-to-end smoke test | ✅ Hoàn thành | Both stages forward-pass OK |
 | Re-evaluation 2026-09-23 | ✅ Hoàn thành | `runs/evaluation/segmentation_test_metrics.json` |
@@ -176,5 +176,5 @@ pytest tests/ -v
 
 ---
 
-**Cập nhật lần cuối:** 23/09/2026 19:08 UTC+7
+**Cập nhật lần cuối:** 25/09/2026 13:51 UTC+7
 **Trạng thái:** ✅ Tất cả phases hoàn thành, chờ deployment

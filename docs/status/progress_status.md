@@ -2,9 +2,9 @@
 
 > **Project:** `Face-Detection-Face-Segmentation`
 > **Owner:** AI Engineer
-> **Last updated:** 2026-09-23 19:08 UTC+7
-> **Status:** ✅ **U-Net segmentation trained & evaluated.** IoU=0.9660 (test), IoU=0.9766 (val), Dice=0.9824, Pixel-Acc=0.9756 — all exceeding targets ≥ 0.90.
-> ✅ **RetinaFace checkpoint loads cleanly** — `models/retinaface_final.pth` (84.6 MB) loads into the custom ResNet34+FPN+SSH architecture; forward pass verified (score ~1.3–1.4). Real WIDER-trained detection metrics still pending.
+> **Last updated:** 2026-09-25 13:51 UTC+7
+> **Status:** ✅ **U-Net segmentation trained & evaluated.** IoU=**0.9679** (test), IoU=**0.9666** (val), Dice=**0.9834**, Pixel-Acc=**0.9770** — all exceeding targets ≥ 0.90.
+> ✅ **RetinaFace checkpoint loads cleanly** — `models/retinaface_final.pth` (84.6 MB) loads into the custom ResNet34+FPN+SSH architecture; forward pass verified (top_score ~1.42, detector run ~0.44s). Real WIDER-trained detection metrics still pending.
 
 ---
 
@@ -364,20 +364,20 @@ Each milestone logs a short report into `/docs/milestones/`.
 **Training:** 10 epochs, Adam (LR=1e-3) + CosineAnnealingLR, batch=16, loss = CE + Dice
 **Checkpoint:** `models/unet_final.pth` (124 MB)
 
-### 14.1 Test-set evaluation (100 images, 2026-09-23)
+### 14.1 Test-set evaluation (100 images, 2026-09-25)
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| Mean IoU | **0.9660** | ≥ 0.90 | ✅ exceeded |
-| Mean Dice | **0.9824** | ≥ 0.95 | ✅ exceeded |
-| Pixel Accuracy | **0.9756** | ≥ 0.97 | ✅ exceeded |
+| Mean IoU | **0.9679** | ≥ 0.90 | ✅ exceeded |
+| Mean Dice | **0.9834** | ≥ 0.95 | ✅ exceeded |
+| Pixel Accuracy | **0.9770** | ≥ 0.97 | ✅ exceeded |
 | Precision (face) | 0.9828 | — | ✅ |
-| Recall (face) | 0.9826 | — | ✅ |
-| F1 (face) | 0.9824 | — | ✅ |
+| Recall (face) | 0.9845 | — | ✅ |
+| F1 (face) | 0.9834 | — | ✅ |
 
 **Evaluation command:**
 ```bash
-python scripts/evaluation/eval_segmentation.py --split test --max-samples 100 --device cpu
+python scripts/evaluation/eval_segmentation.py --split test --max-samples 100 --visualize --num-visualizations 8 --device cpu
 ```
 
 **Detailed metrics:** `runs/evaluation/segmentation_test_metrics.json`
@@ -397,13 +397,13 @@ Encoder (custom):                Decoder (custom + ConvTranspose2d):
 
 Total parameters: **31,043,586** (118 MB raw, 124 MB on disk with optimizer state removed)
 
-### 14.3 Validation sample (100 images, 2026-09-23)
+### 14.3 Validation sample (100 images, 2026-09-25)
 
 | Metric | Value |
 |--------|-------|
-| Mean IoU | 0.9766 |
-| Mean Dice | 0.9880 |
-| Pixel Accuracy | 0.9834 |
+| Mean IoU | 0.9666 |
+| Mean Dice | 0.9826 |
+| Pixel Accuracy | 0.9756 |
 
 ### 14.4 Files added/updated this iteration
 

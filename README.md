@@ -21,15 +21,17 @@
 #### Segmentation (U-Net)
 | Metric | Test Set | Validation Set |
 |--------|----------|----------------|
-| **Mean IoU** | **0.9660** | **0.9766** |
-| **Mean Dice** | **0.9824** | **0.9880** |
-| **Pixel Accuracy** | 0.9756 | 0.9834 |
+| **Mean IoU** | **0.9679** | **0.9666** |
+| **Mean Dice** | **0.9834** | **0.9826** |
+| **Pixel Accuracy** | **0.9770** | **0.9756** |
 
 #### Detection (RetinaFace)
 | Metric | Value |
 |--------|-------|
-| Forward Pass (640×640) | ~0.98s (CPU) |
-| Smoke Test | ✅ Pass |
+| Forward Pass (640×640) | ~0.56s (CPU) |
+| Detector Run (640×640) | ~0.44s (CPU) |
+| Top Score (max conf) | 1.42 |
+| Smoke Test | ✅ Pass (verdict: OK) |
 
 See [docs/references/DANH_GIA_MODEL.md](./docs/references/DANH_GIA_MODEL.md) for detailed evaluation.
 
@@ -274,5 +276,5 @@ See [docs/planning/TEAM_WORK_PLAN.md](./docs/planning/TEAM_WORK_PLAN.md) for tea
 
 ---
 
-**Last Updated**: September 23, 2026  
+**Last Updated**: September 25, 2026  
 **Status**: ✅ Models Trained → 📊 Evaluation Complete

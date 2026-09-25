@@ -1,7 +1,7 @@
 # Roadmap — Face Detection & Face Segmentation
 
 > One-page view of the project. Full plan → `docs/plan/implementation_plan.md`.
-> **Last updated:** 2026-09-23 19:08 UTC+7
+> **Last updated:** 2026-09-25 13:51 UTC+7
 
 ## Đề bài (đề.txt)
 
@@ -33,9 +33,9 @@
 | 1 | **Research** | #1 | `docs/survey.md`, ADR `0001-model-choice.md` | ☑ |
 | 2 | **Data** | #2, #3 | PNG datasets, 80/10/10 split | ☐ (script + loader ready; raw download is the user's call) |
 | 3 | **Detection code** | #4 | `src/detection/{retinaface,anchors,losses,dataset,inference,train,eval,boxes}.py` | ☑ |
-| 4 | **Train detector** | #5 | `retinaface_final.pth` | ✅ checkpoint loaded (84.6MB, forward pass OK, score ~1.4) |
+| 4 | **Train detector** | #5 | `retinaface_final.pth` | ✅ checkpoint loaded (84.6MB, forward pass OK, top_score ~1.42) |
 | 5 | **Segmentation code** | #6 | `src/segmentation/{unet,losses,dataset,train,eval,inference}.py` | ☑ |
-| 6 | **Train segmentor** | #7 | `unet_final.pth` | ✅ trained (IoU=**0.9660** test, **0.9766** val) |
+| 6 | **Train segmentor** | #7 | `unet_final.pth` | ✅ trained (IoU=**0.9679** test, **0.9666** val) |
 | 7 | **Pipeline** | #8 | `src/pipeline/{orchestrator,stages,visualizer,run}.py` | ☑ |
 | 8 | **Tests & CI** | #9 | `tests/` (67 tests) + `.github/workflows/ci.yml` | ☑ |
 | 9 | **Evaluation** | #10, #11 | `data/output/eval_results.md`, `docs/references/DANH_GIA_MODEL.md` | ☑ (seg done with real metrics; det smoke-test passes; pipeline smoke-test passes) |
@@ -62,8 +62,8 @@
 
 | Model | File | Size | Test metric | Status |
 |-------|------|------|-------------|--------|
-| U-Net segmentation | `models/unet_final.pth` | 124 MB | IoU=**0.9660**, Dice=**0.9824**, PixelAcc=0.9756 (test) | ✅ trained |
-| RetinaFace detection | `models/retinaface_final.pth` | 84.6 MB | forward pass ✅ (score ~1.4) | ✅ checkpoint loaded (real WIDER mAP pending) |
+| U-Net segmentation | `models/unet_final.pth` | 124 MB | IoU=**0.9679**, Dice=**0.9834**, PixelAcc=0.9770 (test) | ✅ trained |
+| RetinaFace detection | `models/retinaface_final.pth` | 84.6 MB | forward pass ✅ (top_score 1.42) | ✅ checkpoint loaded (real WIDER mAP pending) |
 
 ## Bắt đầu
 

@@ -16,12 +16,13 @@ Helper scripts for the Face Detection & Segmentation project, organized by purpo
 
 ---
 
-## Status (2026-09-23)
+## Status (2026-09-25)
 
 - ✅ Both checkpoints loaded: `models/retinaface_final.pth` (84.6 MB) + `models/unet_final.pth` (118.5 MB)
-- ✅ U-Net re-evaluated: **IoU=0.9660** on 100 test samples
+- ✅ U-Net re-evaluated: **IoU=0.9679** on 100 test samples, **IoU=0.9666** on val
 - ✅ All scripts run end-to-end with real trained models
-- ✅ Old dummy-data artifacts removed; new visualizations regenerated
+- ✅ RetinaFace: top_score 1.42, forward 0.56s, detector 0.44s
+- ✅ 8 fresh visualizations generated in `runs/visualizations/test/`
 
 ---
 
