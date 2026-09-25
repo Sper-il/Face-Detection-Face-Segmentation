@@ -1,432 +1,274 @@
-# 🎤 Kịch Bản Trình Bày Project — 10 Phút
+# 🎤 Kịch Bản Trình Bày — 10 Phút
 
 > **Project:** Face Detection & Face Segmentation
-> **Thời lượng:** 10 phút (12-13 slide)
-> **Người trình bày:** AI Engineer
+> **Thời lượng:** 10 phút
 > **Ngày:** 2026-09-25
+> **Hình thức:** Nói trực tiếp, không cần slide PowerPoint
 
 ---
 
-## 📋 Tổng Quan Cấu Trúc
+## 📋 Cấu Trúc 10 Phút
 
-| Phần | Thời gian | Slide |
-|------|-----------|-------|
-| 1. Giới thiệu vấn đề | 1:00 | 1 |
-| 2. Mục tiêu & phạm vi | 0:30 | 2 |
-| 3. Pipeline tổng quan | 1:30 | 3-4 |
-| 4. Kiến trúc Stage 1 (RetinaFace) | 2:00 | 5-6 |
-| 5. Kiến trúc Stage 2 (U-Net) | 2:00 | 7-8 |
-| 6. Dữ liệu & Huấn luyện | 1:00 | 9 |
-| 7. Kết quả Evaluation | 1:30 | 10-11 |
-| 8. Demo & Visualization | 0:30 | 12 |
-| 9. Kết luận & Hướng phát triển | 0:30 | 13 |
-| **Tổng** | **10:00** | **13 slide** |
+| Phần | Thời gian |
+|------|-----------|
+| 1. Mở đầu & Giới thiệu | 1:00 |
+| 2. Pipeline tổng quan | 1:30 |
+| 3. Stage 1: RetinaFace | 2:00 |
+| 4. Stage 2: U-Net | 2:00 |
+| 5. Dữ liệu & Huấn luyện | 1:00 |
+| 6. Kết quả | 1:30 |
+| 7. Demo & Kết luận | 1:00 |
+| **Tổng** | **10:00** |
 
 ---
 
-## 🎬 Slide 1: Giới Thiệu Vấn Đề (1:00)
+## 🗣️ Phần 1: Mở Đầu & Giới Thiệu (1:00)
 
-**Mở đầu:**
-> "Xin chào mọi người. Hôm nay tôi xin trình bày project **Face Detection & Face Segmentation** — một hệ thống 2 giai đoạn có khả năng vừa phát hiện vị trí khuôn mặt, vừa tách chính xác vùng da khuôn mặt từ ảnh đầu vào."
+> Xin chào mọi người. Hôm nay tôi xin trình bày project **Face Detection & Face Segmentation** — một hệ thống 2 giai đoạn có khả năng vừa **phát hiện vị trí khuôn mặt**, vừa **tách chính xác vùng da khuôn mặt** từ ảnh đầu vào.
 
-**Bối cảnh & Ứng dụng:**
-- 🎭 **Computer Vision** là lĩnh vực AI nóng — đặc biệt face analysis
-- 🏢 **Ứng dụng thực tế:**
-  - Nhận diện khuôn mặt trong camera an ninh
-  - Beauty camera / Filter Instagram / TikTok
-  - AR effects, makeup try-on
-  - Medical imaging, age estimation
-- 🎯 **Bài toán:** Cho 1 ảnh → tìm bounding box + mask cho MỌI khuôn mặt
+> Bạn đã bao giờ dùng filter trên Instagram hay TikTok? Đằng sau những hiệu ứng đó là hệ thống như thế này — nó phải biết mặt bạn ở đâu, và vùng nào là da mặt để apply filter.
 
-**Hook visual:**
-> "Bạn đã bao giờ dùng filter Instagram? Đằng sau nó là hệ thống như thế này."
+> **Ứng dụng thực tế** rất rộng:
+> - Camera an ninh, nhận diện khuôn mặt
+> - Beauty camera, AR effects
+> - Makeup try-on
+> - Medical imaging
 
----
+> **Bài toán của project:** Cho 1 ảnh đầu vào → trả về **bounding box** cho mỗi khuôn mặt + **binary mask** tách vùng da mặt.
 
-## 🎯 Slide 2: Mục Tiêu & Phạm Vi (0:30)
-
-**Mục tiêu:**
-- ✅ Xây dựng pipeline **end-to-end** (ảnh vào → overlay ra)
-- ✅ **Detection:** tìm tất cả khuôn mặt với bounding box
-- ✅ **Segmentation:** tách vùng khuôn mặt pixel-level
-- ✅ Hiệu năng thực tế: IoU > 0.90 (target ngành)
-
-**Phạm vi:**
-- 📸 Input: ảnh màu RGB/BGR
-- 🔢 Output: bounding boxes + binary masks + overlay
-- 🚀 Triển khai: CPU (không cần GPU)
-- 📦 Models: 2 file `.pth` (~200MB total)
-
-**Không làm:**
-- ❌ Face recognition (nhận diện danh tính)
-- ❌ Landmark 68 điểm (chỉ làm detection + segmentation)
-- ❌ Real-time video (chỉ image-level)
+> **Mục tiêu cụ thể:**
+> - Pipeline end-to-end: ảnh vào → overlay ra
+> - IoU segmentation > 0.90 (chuẩn ngành)
+> - Chạy được trên CPU (không cần GPU)
 
 ---
 
-## 🔗 Slide 3: Pipeline Tổng Quan (1:30)
+## 🔗 Phần 2: Pipeline Tổng Quan (1:30)
 
-**Sơ đồ 2-Stage Cascade:**
+> Pipeline của tôi là **2-stage cascade** — 2 giai đoạn nối tiếp nhau:
 
-```
-┌────────────┐      ┌──────────────────┐      ┌────────────────┐      ┌──────────────┐
-│  Input IMG │ ───► │  Stage 1         │ ───► │  Stage 2       │ ───► │  Overlay +   │
-│  (BGR)     │      │  RetinaFace      │      │  U-Net         │      │  JSON        │
-│  HxWx3     │      │  Detection       │      │  Segmentation  │      │              │
-└────────────┘      └──────────────────┘      └────────────────┘      └──────────────┘
-                          bboxes[N,4]             masks[N,H,W]
-                          scores[N]               (binary)
-```
+> **Giai đoạn 1 — RetinaFace Detection:**
+> Input là ảnh BGR kích thước bất kỳ. Mình resize về 640×640, đưa qua model RetinaFace, model sẽ trả về N bounding box cùng confidence score. Mỗi box có format `[x1, y1, x2, y2, score]`.
 
-**Giải thích flow:**
-1. **Stage 1 — RetinaFace** (từ CVPR 2020):
-   - Input: 640×640 image
-   - Output: N bounding boxes + confidence scores
-   - Mỗi box = `[x1, y1, x2, y2, score]`
+> **Giai đoạn 2 — U-Net Segmentation:**
+> Với mỗi bbox tìm được, mình crop vùng mặt (có margin 10%), resize về 256×256, rồi đưa qua U-Net. U-Net trả về binary mask 256×256 — pixel nào là mặt, pixel nào là background.
 
-2. **Stage 2 — U-Net** (từ MICCAI 2015):
-   - Input: face crop từ mỗi bbox + margin 10%
-   - Output: binary mask (0/1 per pixel)
-   - Mỗi face = 1 mask 256×256
+> **Post-processing:**
+> Cuối cùng, resize mask về kích thước crop ban đầu, render overlay đỏ lên ảnh gốc, vẽ bbox, lưu PNG + JSON kết quả.
 
-3. **Post-processing:**
-   - Resize mask về crop size
-   - Render overlay đỏ + bbox
-   - Lưu PNG + JSON
-
-**Ưu điểm 2-stage:**
-- 🔍 Tận dụng detection để localize → segmentation chỉ tập trung vào face
-- 🎯 Chính xác hơn so với segmentation-only (cần post-process tìm connected components)
-- ⚡ Linh hoạt: có thể dùng riêng từng stage
+> **Tại sao tách 2 giai đoạn?**
+> - Detection localize trước → segmentation chỉ tập trung vào vùng mặt
+> - Chính xác hơn so với segmentation-only
+> - Linh hoạt: có thể dùng riêng từng stage
 
 ---
 
-## 🧠 Slide 4: Stage 1 — RetinaFace Architecture (2:00)
+## 🧠 Phần 3: Stage 1 — RetinaFace (2:00)
 
-**Kiến trúc chi tiết (ResNet34 + FPN + SSH):**
+> Giai đoạn 1 dùng **RetinaFace** — paper từ CVPR 2020. Đây là model face detection rất nổi tiếng, cũng là state-of-the-art trên WIDER FACE dataset.
 
-```
-Input (3, 640, 640)
-    ↓
-ResNet-34 Backbone
-    ├── c3 (stride 8)
-    ├── c4 (stride 16)
-    └── c5 (stride 32)
-    ↓
-FPN (Feature Pyramid Network)
-    ├── p3: c3 + upsample(c4)
-    ├── p4: c4 + upsample(c5)
-    └── p5: c5
-    ↓
-SSH (Single Stage Headless) — context module
-    ↓
-Multi-task Heads (per FPN level)
-    ├── Classification: 12 ch (bg + face × 3 anchors × 2)
-    ├── Box regression: 24 ch (4 coords × 3 anchors × 2)
-    └── Landmark:       60 ch (10 coords × 3 anchors × 2)
-    ↓
-NMS + decode → N bboxes
-```
+> **Kiến trúc gồm 4 phần chính:**
 
-**Thông số:**
-| Layer | Output Shape |
-|-------|--------------|
-| p3 (stride 8)  | (1, 6400, 12) cls |
-| p4 (stride 16) | (1, 1600, 12) cls |
-| p5 (stride 32) | (1, 400, 12) cls |
-| **Total params** | **22.1M** |
-| **Checkpoint** | **84.6 MB** |
+> **Phần 1 — Backbone:** Mình dùng **ResNet-34** để extract features. ResNet-34 có 4 stages, mình lấy output của 3 stages cuối gọi là c3, c4, c5 — tương ứng với stride 8, 16, 32.
 
-**Điểm đặc biệt:**
-- ✅ **Custom architecture** — tự build để khớp `retinaface_final.pth`
-- ✅ Forward pass verified: top_score = **1.42** (cao → confident)
-- ✅ Multi-task learning: face + box + landmark cùng lúc
+> **Phần 2 — FPN (Feature Pyramid Network):** FPN kết hợp features từ nhiều scale. c3 + upsample c4 → p3, c4 + upsample c5 → p4, c5 → p5. Mục đích là để detect mặt ở nhiều kích thước khác nhau.
+
+> **Phần 3 — SSH Module:** SSH là context module giúp tăng receptive field. Mỗi FPN level đi qua SSH → 128-channel feature map.
+
+> **Phần 4 — Multi-task Heads:** Ở mỗi FPN level, có 3 head song song:
+> - Classification: 12 channel — phân loại face / background cho 3 anchors × 2 box
+> - Box regression: 24 channel — dự đoán 4 tọa độ box cho 3 anchors × 2
+> - Landmark: 60 channel — dự đoán 10 tọa độ landmark cho 3 anchors × 2
+
+> **Output shapes** ở 3 FPN level:
+> - p3 (stride 8): 6400 anchors
+> - p4 (stride 16): 1600 anchors
+> - p5 (stride 32): 400 anchors
+> - Tổng: **8400 anchors** trên 1 ảnh
+
+> Model có **22.1M parameters**, file checkpoint **84.6 MB**.
+
+> **Kết quả smoke test:**
+> - Forward pass: 0.56 giây trên CPU
+> - Top confidence score: **1.42** — rất cao, nghĩa là model tự tin khi detect
 
 ---
 
-## 🎨 Slide 5: Stage 2 — U-Net Architecture (2:00)
+## 🎨 Phần 4: Stage 2 — U-Net (2:00)
 
-**Standard U-Net với DoubleConv blocks:**
+> Giai đoạn 2 dùng **U-Net** — paper từ MICCAI 2015, ban đầu cho medical imaging nhưng cũng rất hiệu quả cho face segmentation.
 
-```
-Input (3, 256, 256)              ← face crop
-    ↓
-ENCODER
-    ├── enc1: 3   → 64    (DoubleConv)
-    ├── enc2: 64  → 128   (MaxPool + DoubleConv)
-    ├── enc3: 128 → 256   (MaxPool + DoubleConv)
-    ├── enc4: 256 → 512   (MaxPool + DoubleConv)
-    └── bottleneck: 512 → 1024
-    ↓
-DECODER (with skip connections)
-    ├── up4: 1024 → 512   (Upsample)
-    ├── dec4: 1024 → 512  (concat with enc4 + DoubleConv)
-    ├── up3: 512  → 256   (Upsample)
-    ├── dec3: 512  → 256  (concat with enc3 + DoubleConv)
-    ├── up2: 256  → 128   (Upsample)
-    ├── dec2: 256  → 128  (concat with enc2 + DoubleConv)
-    ├── up1: 128  → 64    (Upsample)
-    └── dec1: 128  → 64   (concat with enc1 + DoubleConv)
-    ↓
-Output head: 64 → 2 (bg + face logits)
-    ↓
-argmax → binary mask {0, 1}
-```
+> **Cấu trúc U-Net có hình chữ U:**
 
-**DoubleConv block:**
-```
-Conv2d(in, out, 3×3, padding=1) → BN → ReLU
-Conv2d(out, out, 3×3, padding=1) → BN → ReLU
-```
+> **Phần Encoder** — đi xuống:
+> - enc1: 3 → 64 channels
+> - enc2: 64 → 128
+> - enc3: 128 → 256
+> - enc4: 256 → 512
+> - bottleneck: 512 → 1024
+>
+> Mỗi encoder block là DoubleConv = 2 lần (Conv 3×3 + BatchNorm + ReLU). Giữa các block có MaxPool 2×2 để giảm resolution.
 
-**Loss function:**
-- 0.5 × **BCE Loss** (Binary Cross-Entropy) trên 2-channel logits
-- 0.5 × **Dice Loss** (1 − |P∩G|/|P∪G|)
+> **Phần Decoder** — đi lên:
+> - up4: 1024 → 512, concat với enc4 → dec4
+> - up3: 512 → 256, concat với enc3 → dec3
+> - up2: 256 → 128, concat với enc2 → dec2
+> - up1: 128 → 64, concat với enc1 → dec1
+>
+> Decoder dùng Upsample + Concat với skip connection từ encoder.
 
-**Thông số:**
-- **31.0M params**, **118.5 MB** checkpoint
-- Input size: **256×256**, output: 256×256 binary mask
+> **Skip connections** là điểm mấu chốt: chúng giữ lại spatial details từ encoder, giúp reconstruct edges chính xác.
 
-**Skip connections quan trọng:**
-- Giữ lại spatial details từ encoder
-- Cho phép reconstruction chính xác edges
+> **Output:** 64 → 2 channels (background + face), qua argmax → binary mask 256×256.
+
+> **Loss function:**
+> - 0.5 × **BCE Loss** (Binary Cross-Entropy) trên logits
+> - 0.5 × **Dice Loss** (1 − |P∩G| / |P∪G|)
+>
+> Kết hợp BCE + Dice giúp ổn định training và handle class imbalance.
+
+> Model có **31M parameters**, file checkpoint **118.5 MB**.
 
 ---
 
-## 📊 Slide 6: Dữ Liệu & Huấn Luyện (1:00)
+## 📊 Phần 5: Dữ Liệu & Huấn Luyện (1:00)
 
-**Bảng dữ liệu:**
+> Mình dùng 2 dataset:
 
-| Dataset | Mục đích | Samples | Split |
-|---------|----------|---------|-------|
-| **WIDER FACE** | Detection | 32,000 imgs / 393K faces | 80/10/10 |
-| **CelebAMask-HQ** | Segmentation | 30,000 imgs | 24K/3K/3K |
+> **WIDER FACE** cho detection training:
+> - 32,000 ảnh, 393,000 khuôn mặt
+> - 80/10/10 split cho train/val/test
+> - Preprocess: resize về max 1024, lưu CSV annotations
 
-**Preprocessing:**
-- WIDER FACE → resize 1024 max, save CSV annotations
-- CelebAMask-HQ → resize 256×256, mask binary 0/255
+> **CelebAMask-HQ** cho segmentation training:
+> - 30,000 ảnh khuôn mặt
+> - Split: 24K train / 3K val / 3K test
+> - Preprocess: resize 256×256, mask binary 0/255
 
-**Training config (UNet):**
-- Optimizer: Adam, lr=1e-3
-- Loss: 0.5×BCE + 0.5×Dice
-- Batch size: 16, epochs: 30
-- Augmentation: flip, color jitter
-- Device: CPU (no GPU required)
+> **Training config cho U-Net:**
+> - Optimizer: Adam, learning rate 1e-3
+> - Loss: 0.5 × BCE + 0.5 × Dice
+> - Batch size 16, train 30 epochs
+> - Augmentation: flip, color jitter
 
-**Hardware thực tế:**
-- Training: ~2-4 giờ trên CPU
-- Inference: ~1.2s/image trên CPU
+> **Đặc biệt:** Toàn bộ training và inference chạy trên CPU, không cần GPU. Training mất khoảng 2-4 giờ.
 
 ---
 
-## 📈 Slide 7: Kết Quả Evaluation — Segmentation (1:00)
+## 📈 Phần 6: Kết Quả Evaluation (1:30)
 
-**Test set (100 samples, 2026-09-25):**
+> Bây giờ là phần quan trọng nhất — **kết quả thực tế**.
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Mean IoU** | **0.9679** | ≥ 0.90 | ✅ **exceeded +7.8%** |
-| **Mean Dice** | **0.9834** | ≥ 0.95 | ✅ **exceeded +3.5%** |
-| **Pixel Accuracy** | **0.9770** | ≥ 0.97 | ✅ **exceeded +0.7%** |
-| **F1 (face)** | 0.9834 | — | ✅ |
-| **Precision** | 0.9828 | — | ✅ |
-| **Recall** | 0.9845 | — | ✅ |
+> **U-Net Segmentation — Test Set (100 ảnh, đánh giá lại ngày 25/09/2026):**
 
-**Validation set (100 samples):**
-| Metric | Value |
-|--------|-------|
-| Mean IoU | **0.9666** |
-| Mean Dice | **0.9826** |
-| Pixel Accuracy | **0.9756** |
+> - **Mean IoU: 0.9679** — tức là 96.79% pixel overlap giữa prediction và ground truth
+> - **Mean Dice: 0.9834** — F1 score cho segmentation
+> - **Pixel Accuracy: 0.9770** — 97.70% pixel được phân loại đúng
+> - **F1 (face class): 0.9834**
+> - **Precision: 0.9828, Recall: 0.9845**
 
-**Đánh giá:**
-> "Kết quả rất tốt. IoU 96.79% cho thấy model phân biệt được pixel thuộc mặt vs background với độ chính xác rất cao — gần như không có noise."
+> So với target đề ra là IoU ≥ 0.90, mình vượt **+7.8%**. Trên validation set cũng đạt **0.9666** — gần như tương đương test set, nghĩa là model **không overfit**.
 
----
+> **RetinaFace Detection:**
+> - Forward pass: 0.56 giây
+> - Detector run với post-processing: 0.44 giây
+> - Top confidence score: **1.42** — rất confident
+> - Smoke test verdict: **OK**
 
-## 🎯 Slide 8: Kết Quả Evaluation — Detection + Pipeline (0:30)
+> **Pipeline end-to-end:** ~1.2 giây cho 1 ảnh có 1 khuôn mặt trên CPU.
 
-**RetinaFace Smoke Test (2026-09-25):**
-
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Forward pass (640×640) | **0.56s** | CPU |
-| Detector run (post-process) | **0.44s** | CPU |
-| **Top confidence score** | **1.42** | Cao → confident |
-| Verdict | **OK** | End-to-end forward pass |
-
-**Output shapes verified:**
-- `cls_logits: [(1, 6400, 12), (1, 1600, 12), (1, 400, 12)]` ✅
-- `box_deltas: [(1, 6400, 24), (1, 1600, 24), (1, 400, 24)]` ✅
-- `lmk_deltas: [(1, 6400, 60), (1, 1600, 60), (1, 400, 60)]` ✅
-
-**Pipeline end-to-end:**
-- ~1.2s cho 1 ảnh có 1 mặt (CPU)
-- 8 fresh visualizations → `runs/visualizations/test/`
+> Kết quả này cho thấy hệ thống hoạt động ổn định và chính xác, đủ tốt cho ứng dụng thực tế.
 
 ---
 
-## 🖼️ Slide 9: Demo & Visualization (0:30)
+## 🎬 Phần 7: Demo & Kết Luận (1:00)
 
-**Cách trình bày:**
-> "Tôi sẽ show một vài visualization từ evaluation set."
+> **(Nếu có demo trực tiếp):**
+> Tôi sẽ chạy thử trên một ảnh. Đây là ảnh đầu vào... model detect được 2 mặt, đây là overlay với bbox và mask đỏ.
 
-**Show các ảnh (8 samples):**
-- 📂 `runs/visualizations/test/sample_*.png`
-- 📂 `runs/visualizations/test/summary.png`
+> **(Nếu chỉ có visualization có sẵn):**
+> Tôi đã generate sẵn 8 visualization trong folder `runs/visualizations/test/`. Mỗi ảnh có 4 panel: ảnh gốc, predicted mask, overlay, ground truth. Như các bạn thấy, mask dự đoán gần như khớp hoàn toàn với ground truth.
 
-**Mỗi ảnh có 4 panels:**
-1. **Original image** (ảnh gốc)
-2. **Predicted mask** (mask dự đoán)
-3. **Overlay** (mask đỏ trên ảnh gốc)
-4. **Ground truth mask** (mask thật)
+> **Tổng kết — Đã đạt được:**
+> - Pipeline end-to-end hoàn chỉnh
+> - U-Net IoU = **96.79%** vượt target 90%
+> - RetinaFace checkpoint load + forward verified
+> - Full evaluation suite + visualizations
+> - 67 unit tests, tất cả pass
+> - Documentation đầy đủ (ARCHITECTURE.md, progress_status.md, ROADMAP.md)
 
-**Show summary.png** — bảng 8×3 grid tổng hợp
+> **Hướng phát triển tiếp:**
+> - Chạy full WIDER FACE mAP evaluation
+> - GPU inference để tăng tốc 5-10×
+> - Real-time webcam pipeline
+> - ONNX export cho production
+> - Web demo với Gradio
 
-**Điểm nhấn:**
-> "Như các bạn thấy, mask dự đoán gần như khớp hoàn toàn với ground truth — đó là lý do IoU=96.79%."
-
----
-
-## 💻 Slide 10: Cách Sử Dụng (0:20)
-
-**CLI:**
-```bash
-# Pipeline smoke test
-python scripts/kaggle/end_to_end_smoke_test.py
-
-# Segmentation evaluation
-python scripts/evaluation/eval_segmentation.py \
-    --split test --max-samples 100 --visualize
-
-# Generate visualizations
-python scripts/inference/visualize_segmentation.py \
-    --num-samples 8 --summary
-```
-
-**Python API:**
-```python
-from src.pipeline.orchestrator import FaceSegmentationPipeline
-
-pipeline = FaceSegmentationPipeline(
-    detector_weights="models/retinaface_final.pth",
-    segmentor_weights="models/unet_final.pth",
-)
-
-result = pipeline.run("image.jpg")
-print(f"Found {len(result.boxes)} faces")
-cv2.imwrite("overlay.png", result.overlay)
-```
+> Cảm ơn mọi người đã lắng nghe. Tôi sẵn sàng trả lời câu hỏi.
 
 ---
 
-## 📂 Slide 11: Project Structure (0:20)
+## 🙋 Q&A Chuẩn Bị Sẵn
 
-```
-Face-Detection-Face-Segmentation/
-├── src/
-│   ├── detection/       # Stage 1: RetinaFace
-│   ├── segmentation/    # Stage 2: U-Net
-│   ├── pipeline/        # Orchestrator
-│   ├── utils/           # Box/mask/NMS/I/O
-│   └── eval.py          # Main eval entrypoint
-├── models/
-│   ├── retinaface_final.pth    (84.6 MB)
-│   └── unet_final.pth         (118.5 MB)
-├── data/processed/      # Train/val/test splits
-├── runs/
-│   ├── evaluation/      # Metrics JSONs
-│   └── visualizations/  # 8+ sample PNGs
-├── tests/               # 67 unit tests
-├── docs/                # Documentation
-└── ARCHITECTURE.md      # Detailed architecture
-```
+**Hỏi: Tại sao chọn U-Net thay vì DeepLab?**
 
-**Stats:**
-- 📦 ~200MB trained models
-- 📝 ~5,000 lines of Python code
-- 🧪 67 unit tests (all passing)
-- 📚 13 markdown docs
+> U-Net đơn giản hơn, train nhanh hơn, và với bài toán binary segmentation (chỉ 2 class: face/background), U-Net hoàn toàn đủ dùng. DeepLab thường dùng cho multi-class segmentation phức tạp hơn.
 
----
+**Hỏi: Có cần GPU không?**
 
-## 🎓 Slide 12: Kết Luận & Hướng Phát Triển (0:30)
+> Không bắt buộc. Inference chạy OK trên CPU khoảng 1.2 giây/ảnh. Training thì có GPU sẽ nhanh hơn 5-10 lần, nhưng CPU vẫn train được, chỉ mất thời gian hơn.
 
-**Đã đạt được:**
-- ✅ Pipeline end-to-end hoàn chỉnh
-- ✅ U-Net IoU=**96.79%** (vượt target 90%)
-- ✅ RetinaFace checkpoint loads + forward pass verified
-- ✅ Full evaluation suite + visualizations
-- ✅ 67 unit tests passing
-- ✅ Comprehensive documentation
+**Hỏi: Tại sao IoU cao vậy?**
 
-**Hướng phát triển tương lai:**
-1. 🎯 **Real WIDER mAP metrics** — chạy full detection eval
-2. ⚡ **GPU inference** — speed up 5-10×
-3. 🎥 **Real-time video** — webcam pipeline
-4. 🏭 **ONNX export** — deploy production
-5. 🎭 **68-landmark face alignment** — add landmark branch
-6. 🌐 **Web demo** — Gradio/Streamlit UI
-7. 📱 **Mobile** — TFLite conversion
+> Dataset CelebAMask-HQ có khuôn mặt chiếm phần lớn ảnh, ít background phức tạp. U-Net với skip connections rất phù hợp cho loại data này. Ngoài ra loss kết hợp BCE + Dice giúp ổn định training.
 
-**Ứng dụng thực tế:**
-- Beauty camera app
-- Face analysis dashboard
-- AR filters
-- Surveillance preprocessing
+**Hỏi: Có thể detect nhiều mặt không?**
+
+> Có. RetinaFace detect được nhiều bounding box, và mỗi box sẽ được segment riêng qua U-Net. Pipeline xử lý tuần tự từng face.
+
+**Hỏi: Input ảnh cần kích thước bao nhiêu?**
+
+> Không giới hạn — pipeline tự resize về 640×640 cho detection và 256×256 cho segmentation. Output mask sẽ được resize về kích thước ảnh gốc.
+
+**Hỏi: Làm sao dùng model?**
+
+> Có 2 cách:
+> - **CLI:** `python scripts/kaggle/end_to_end_smoke_test.py` để test pipeline
+> - **Python API:** import `FaceSegmentationPipeline` từ `src.pipeline.orchestrator`, khởi tạo với 2 file .pth, gọi `pipeline.run("image.jpg")`
 
 ---
 
-## 🙋 Slide 13: Q&A (Tuỳ thời gian)
-
-**Câu hỏi thường gặp:**
-
-**Q: Tại sao chọn U-Net thay vì DeepLab?**
-> A: U-Net đơn giản hơn, train nhanh hơn, đủ tốt cho face segmentation. DeepLab thường dùng cho segmentation nhiều class.
-
-**Q: Có cần GPU không?**
-> A: Inference chạy OK trên CPU (~1.2s/image). Training thì có GPU sẽ nhanh hơn nhiều (5-10×).
-
-**Q: Tại sao IoU cao vậy?**
-> A: Dataset CelebAMask-HQ có face chiếm phần lớn ảnh, U-Net với skip connections rất phù hợp cho medical/biomedical segmentation.
-
-**Q: Có thể detect nhiều mặt không?**
-> A: Có — RetinaFace detect được nhiều bbox. Mỗi bbox sẽ được segment riêng.
-
----
-
-## 📌 Tips Trình Bày
+## 📌 Ghi Chú Khi Trình Bày
 
 ### ⏰ Timing:
-- **Tổng:** 10:00 phút (chuẩn)
-- **Buffer:** ~30s cho câu hỏi nhanh / slides chuyển tiếp
-- **Nếu hết thời gian:** Bỏ slide 11 (Project Structure) và slide 10 (Cách sử dụng)
+- **Tổng 10 phút**, có buffer ~30 giây
+- **Nếu hết giờ** → bỏ phần Demo, kết thúc ở phần Kết quả
+- **Nếu thừa giờ** → mở rộng phần Q&A hoặc show visualization chi tiết
 
-### 🎨 Visual aids cần chuẩn bị:
-- ✅ Sơ đồ pipeline (slide 3)
-- ✅ Architecture diagrams (slide 4, 5)
-- ✅ Bảng metrics (slide 7, 8)
-- ✅ 8 visualization PNGs (slide 9)
-- ✅ Demo thực tế trên 1 ảnh (optional)
+### 🎨 Visual aids cần chuẩn bị (optional):
+- Sơ đồ pipeline (vẽ tay hoặc mở ARCHITECTURE.md)
+- Mở file `runs/visualizations/test/summary.png` để show kết quả
+- Mở `docs/ARCHITECTURE.md` nếu ai hỏi chi tiết kỹ thuật
 
-### 💬 Câu mở đầu gợi ý:
-> "Bạn đã bao giờ thắc mắc filter trên Instagram hoạt động thế nào không? Đằng sau nó là hệ thống 2 giai đoạn mà tôi sẽ trình bày hôm nay."
+### 💬 Tone & Style:
+- Nói tự nhiên, không đọc từng chữ
+- Dùng ví dụ cụ thể (Instagram filter, AR camera)
+- Tránh jargon không cần thiết
+- Nếu hỏi chi tiết → chuyển sang tài liệu kỹ thuật
 
-### 🎤 Câu kết thúc:
-> "Project đã đạt IoU=96.79% trên tập test, vượt target 90%. Cảm ơn mọi người đã lắng nghe — tôi sẵn sàng trả lời câu hỏi."
+### 🎤 Câu hook:
+> "Bạn đã bao giờ thắc mắc filter trên Instagram hoạt động thế nào?"
 
-### 📝 Ghi chú kỹ thuật:
-- Tránh nói quá chi tiết về SSH, FPN (high-level là đủ)
-- Tập trung vào **kết quả** và **ứng dụng** thực tế
-- Nếu ai đó hỏi sâu → chuyển sang ARCHITECTURE.md
-- Demo trực tiếp trên 1 ảnh để gây ấn tượng
+### 🎤 Câu kết:
+> "Project đã đạt IoU=96.79% trên tập test, vượt target 90%. Cảm ơn mọi người đã lắng nghe."
 
 ---
 
-## 🔗 Tài Liệu Tham Khảo
+## 🔗 Tài Liệu Tham Khảo Nhanh
 
-- 📄 [ARCHITECTURE.md](ARCHITECTURE.md) — Chi tiết kỹ thuật
-- 📊 [progress_status.md](docs/status/progress_status.md) — Status hiện tại
-- 📚 [ROADMAP.md](docs/planning/ROADMAP.md) — Lộ trình dự án
-- 🧪 [tests/](tests/) — 67 unit tests
-- 🖼️ [runs/visualizations/](runs/visualizations/) — Demo images
+- 📄 `ARCHITECTURE.md` — Kiến trúc chi tiết
+- 📊 `docs/status/progress_status.md` — Status hiện tại
+- 📚 `docs/planning/ROADMAP.md` — Lộ trình dự án
+- 🧪 `tests/` — 67 unit tests
+- 🖼️ `runs/visualizations/` — Demo images
+- 📋 `docs/PRESENTATION_SCRIPT.md` — File này
