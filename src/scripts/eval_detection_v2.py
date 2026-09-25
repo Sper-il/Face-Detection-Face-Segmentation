@@ -4,9 +4,10 @@ Usage::
 
     python -m src.scripts.eval_detection_v2 \
         --config src/configs/retinaface.yaml \
-        --checkpoint runs/retinaface/retinaface_best.pth \
-        --output runs/retinaface/eval_results.json
+        --checkpoint models/retinaface_final.pth \
+        --output runs/evaluation/retinaface_v2_metrics.json
 
+Note: Use models/retinaface_final.pth for the trained checkpoint.
 This is a *patched* version of ``src/scripts/eval_detection.py`` that:
 
 - lowers the default ``conf_threshold`` to 0.02 (model trained for < 20 epochs

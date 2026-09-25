@@ -1,4 +1,12 @@
-"""Đánh giá UNet segmentation (hỗ trợ JPG/PNG)."""
+"""Evaluate U-Net segmentation on CelebAMask-HQ.
+
+Usage::
+
+    python -m src.scripts.eval_unet_simple --checkpoint models/unet_final.pth
+
+Default checkpoint: models/unet_final.pth
+Default data: data/processed/segmentation/val/images + masks
+"""
 import argparse
 import json
 from pathlib import Path
@@ -8,7 +16,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from src.segmentation.unet import UNet, UNetConfig
+from src.segmentation.unet_model import UNet, UNetConfig
 from src.segmentation.eval import compute_segmentation_metrics
 
 
@@ -80,7 +88,7 @@ def load_and_eval(model, images_dir, masks_dir, image_size=512, max_images=None,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint", default="models/unet_demo.pth")
+    parser.add_argument("--checkpoint", default="models/unet_final.pth")
     parser.add_argument("--images-dir", default="data/processed/segmentation/val/images")
     parser.add_argument("--masks-dir", default="data/processed/segmentation/val/masks")
     parser.add_argument("--image-size", type=int, default=512)

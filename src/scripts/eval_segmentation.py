@@ -4,8 +4,10 @@ Usage::
 
     python -m src.scripts.eval_segmentation \
         --config src/configs/unet.yaml \
-        --checkpoint runs/unet/unet_best.pth \
-        --output runs/unet/eval_results.json
+        --checkpoint models/unet_final.pth \
+        --output runs/evaluation/unet_metrics.json
+
+Note: Use models/unet_final.pth for the trained checkpoint.
 """
 
 from __future__ import annotations

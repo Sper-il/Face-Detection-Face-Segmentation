@@ -3,14 +3,18 @@
 Produces (1) a printed summary table and (2) appends an entry to
 ``data/output/eval_results.md`` per ADR-0003.
 
-Usage::
+Usage (defaults use trained models and val splits)::
 
-    python -m src.eval --detector-weights runs/det_train/retinaface_best.pth \\
-        --segmentor-weights runs/seg_train/unet_best.pth \\
-        --detection-csv data/processed/detection/test/annotations.csv \\
-        --detection-images data/processed/detection/test/images \\
-        --segmentation-images data/processed/segmentation/test/images \\
-        --segmentation-masks data/processed/segmentation/test/masks
+    # Run with defaults (uses models/retinaface_final.pth + models/unet_final.pth)
+    python -m src.eval
+
+    # Run with custom paths
+    python -m src.eval --detector-weights models/retinaface_final.pth \\
+        --segmentor-weights models/unet_final.pth \\
+        --detection-csv data/processed/detection/val/annotations.csv \\
+        --detection-images data/processed/detection/val/images \\
+        --segmentation-images data/processed/segmentation/val/images \\
+        --segmentation-masks data/processed/segmentation/val/masks
 """
 
 from __future__ import annotations
@@ -32,12 +36,24 @@ from src.utils.io import ensure_dir
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate detector + segmentor.")
-    parser.add_argument("--detector-weights", type=str, required=True)
-    parser.add_argument("--segmentor-weights", type=str, required=True)
-    parser.add_argument("--detection-csv", type=str, required=True)
-    parser.add_argument("--detection-images", type=str, required=True)
-    parser.add_argument("--segmentation-images", type=str, required=True)
-    parser.add_argument("--segmentation-masks", type=str, required=True)
+    parser.add_argument("--detector-weights", type=str, 
+                        default="models/retinaface_final.pth",
+                        help="Path to detection model (default: models/retinaface_final.pth)")
+    parser.add_argument("--segmentor-weights", type=str, 
+                        default="models/unet_final.pth",
+                        help="Path to segmentation model (default: models/unet_final.pth)")
+    parser.add_argument("--detection-csv", type=str, 
+                        default="data/processed/detection/val/annotations.csv",
+                        help="Detection annotations CSV (default: val split)")
+    parser.add_argument("--detection-images", type=str, 
+                        default="data/processed/detection/val/images",
+                        help="Detection images directory (default: val split)")
+    parser.add_argument("--segmentation-images", type=str, 
+                        default="data/processed/segmentation/val/images",
+                        help="Segmentation images directory (default: val split)")
+    parser.add_argument("--segmentation-masks", type=str, 
+                        default="data/processed/segmentation/val/masks",
+                        help="Segmentation masks directory (default: val split)")
     parser.add_argument("--max-images", type=int, default=None)
     parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--eval-results", type=str, default="data/output/eval_results.md")
@@ -50,7 +66,8 @@ def evaluate_segmentor(seg, images_dir: Path, masks_dir: Path, max_images: int |
     """Compute IoU / Dice / pixel accuracy averaged over the test set."""
     import cv2
 
-    image_files = sorted(images_dir.glob("*.png"))
+    # Support both .jpg and .png
+    image_files = sorted(images_dir.glob("*.jpg")) + sorted(images_dir.glob("*.png"))
     if max_images is not None:
         image_files = image_files[:max_images]
 

@@ -4,8 +4,10 @@ Usage::
 
     python -m src.scripts.eval_detection \
         --config src/configs/retinaface.yaml \
-        --checkpoint runs/retinaface/retinaface_best.pth \
-        --output runs/retinaface/eval_results.json
+        --checkpoint models/retinaface_final.pth \
+        --output runs/evaluation/retinaface_metrics.json
+
+Note: Use models/retinaface_final.pth for the trained checkpoint.
 """
 
 from __future__ import annotations

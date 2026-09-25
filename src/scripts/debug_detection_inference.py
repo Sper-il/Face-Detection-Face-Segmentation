@@ -38,7 +38,7 @@ from src.utils.io import load_yaml
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Debug RetinaFace inference (CPU-friendly).")
-    p.add_argument("--checkpoint", type=str, default="models/retinaface_demo.pth")
+    p.add_argument("--checkpoint", type=str, default="models/retinaface_final.pth")
     p.add_argument("--config", type=str, default="src/configs/retinaface.yaml")
     p.add_argument("--num-images", type=int, default=5)
     p.add_argument("--conf-threshold", type=float, default=0.02)

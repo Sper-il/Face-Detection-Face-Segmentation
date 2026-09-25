@@ -1,26 +1,34 @@
 """Test U-Net model on a single image."""
 import sys
-import cv2
-import numpy as np
 from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))
 
+import cv2
+import numpy as np
 from src.segmentation.inference import UNetSegmentor
 
-# Paths
-MODEL_PATH = "e:/Face-Detection-Face-Segmentation/models/unet_final.pth"
-IMAGE_PATH = "e:/Face-Detection-Face-Segmentation/data/processed/segmentation/test/images/00002.jpg"
-OUTPUT_DIR = "e:/Face-Detection-Face-Segmentation/data/output/test_results"
+# Paths (relative to project root)
+MODEL_PATH = REPO / "models" / "unet_final.pth"
+IMAGE_PATH = REPO / "data" / "processed" / "segmentation" / "test" / "images"
+OUTPUT_DIR = REPO / "data" / "output" / "test_results"
 
 def main():
+    # Use first available image
+    sample_images = sorted(IMAGE_PATH.glob("*.jpg")) + sorted(IMAGE_PATH.glob("*.png"))
+    if not sample_images:
+        print(f"No images found in {IMAGE_PATH}")
+        return
+    image_path = sample_images[0]
+    
     # Create output dir
     Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
     
     # Load image
-    print(f"Loading image: {IMAGE_PATH}")
-    image = cv2.imread(IMAGE_PATH)
+    print(f"Loading image: {image_path}")
+    image = cv2.imread(str(image_path))
     if image is None:
         print("Error: Could not load image")
         return
@@ -28,7 +36,7 @@ def main():
     
     # Load model
     print(f"Loading model: {MODEL_PATH}")
-    segmentor = UNetSegmentor(weights=MODEL_PATH, device="cpu")
+    segmentor = UNetSegmentor(weights=str(MODEL_PATH), device="cpu")
     print("Model loaded successfully")
     
     # Run inference

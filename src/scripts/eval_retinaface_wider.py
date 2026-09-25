@@ -1,4 +1,11 @@
-"""Đánh giá RetinaFace trên WIDER_FACE (format gốc)."""
+"""Evaluate RetinaFace on WIDER FACE (original format).
+
+Usage::
+
+    python -m src.scripts.eval_retinaface_wider --checkpoint models/retinaface_final.pth
+
+Default checkpoint: models/retinaface_final.pth
+"""
 import argparse
 import json
 from pathlib import Path
@@ -135,7 +142,7 @@ def find_image(images_dir: Path, img_id: str) -> Path | None:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint", default="models/retinaface_demo.pth")
+    parser.add_argument("--checkpoint", default="models/retinaface_final.pth")
     parser.add_argument("--conf-threshold", type=float, default=0.05)
     parser.add_argument("--nms-iou", type=float, default=0.5)
     parser.add_argument("--max-images", type=int, default=None)
