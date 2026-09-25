@@ -1,4 +1,4 @@
-# 🎤 Kịch Bản Trình Bày Folder Project — 10 Phút
+# 🎤 Bài Trình Bày Project — 10 Phút
 
 > **Project:** Face Detection & Face Segmentation
 > **Thời lượng:** 10 phút
@@ -7,459 +7,335 @@
 
 ---
 
-## ⏰ Tổng Quan Timing
+## 🗺️ Bản Đồ Click Chuột — Mở File Nào Lúc Nào
 
-| Phần | Thời gian | Folder cần mở |
-|------|-----------|---------------|
-| 1. Mở đầu — Giới thiệu tổng quan | 1:00 | Folder gốc |
-| 2. Cấu trúc project | 1:30 | `src/`, `models/`, `data/` |
-| 3. Stage 1 — Detection (RetinaFace) | 2:00 | `src/detection/` |
-| 4. Stage 2 — Segmentation (U-Net) | 2:00 | `src/segmentation/` |
-| 5. Pipeline & Utils | 1:00 | `src/pipeline/`, `src/utils/` |
-| 6. Kết quả & Đánh giá | 1:30 | `runs/` |
-| 7. Tests & Documentation | 0:30 | `tests/`, `docs/` |
-| 8. Kết luận & Q&A | 0:30 | Folder gốc |
-
----
-
-## 📍 Mở File Nào Cụ Thể — Quick Reference
-
-> **Mục đích:** Bảng này cho biết **chính xác click vào file nào** ở mỗi phần. In ra hoặc để mở sẵn khi trình bày.
-
-| Thời gian | Click chuột phải → Mở file | Xem gì trong file |
-|-----------|---------------------------|------------------|
-| **0:00 → 1:00** | (không click, chỉ Explorer) | 6 folder chính: `src/`, `models/`, `data/`, `runs/`, `tests/`, `docs/` |
-| **1:00 → 2:30** | (chỉ mở rộng folder) | `src/detection/`, `src/segmentation/`, `src/pipeline/`, `src/utils/` |
-| | `models/` mở rộng | `retinaface_final.pth`, `unet_final.pth` |
-| | `data/` mở rộng | `processed/wider_face/`, `processed/celeba_mask/` |
-| **2:30 → 4:30** | `src/detection/model.py` | Tìm class `RetinaFace` (~dòng 50-80) |
-| | `src/detection/weights.py` | Hàm `load_checkpoint` (~dòng 20-40) |
-| | `src/detection/boxes.py` | Hàm `decode_boxes` + `nms` (~dòng 30-80) |
-| | `src/detection/infer.py` | Hàm `detect_faces` (~dòng 20-50) |
-| **4:30 → 6:30** | `src/segmentation/model.py` | Tìm class `UNet` (~dòng 40-100) |
-| | `src/segmentation/losses.py` | Hàm `combined_loss` (~dòng 30-60) |
-| | `src/segmentation/dataset.py` | Class `FaceSegDataset` (~dòng 20-50) |
-| | `src/segmentation/train.py` | Vòng lặp training (~dòng 80-120) |
-| | `src/segmentation/infer.py` | Hàm `segment_face` (~dòng 20-50) |
-| **6:30 → 7:30** | `src/pipeline/orchestrator.py` | Class `FaceSegmentationPipeline` (~dòng 30-80) |
-| | `src/utils/box_utils.py` | Hàm `iou`, `xyxy_to_xywh` |
-| | `src/eval.py` | Hàm `main` (~dòng 100-150) |
-| **7:30 → 9:00** | `runs/evaluation/segmentation_test_metrics.json` | Toàn bộ file (metrics) |
-| | `runs/evaluation/segmentation_val_metrics.json` | Toàn bộ file |
-| | `runs/evaluation/pipeline_smoke_test.json` | Field `verdict`, `retinaface` |
-| | `runs/visualizations/test/sample_*.png` | Mở 1 ảnh bất kỳ (4-panel) |
-| **9:00 → 9:30** | `tests/` | Tổng cộng 67 file `test_*.py` |
-| | `docs/PRESENTATION_SCRIPT.md` | File đang đọc |
-| | `docs/status/progress_status.md` | Status hiện tại |
-| | `docs/planning/ROADMAP.md` | Lộ trình |
-| | `ARCHITECTURE.md` (root) | Chi tiết kiến trúc |
-| **9:30 → 10:00** | (đóng file, show folder sạch) | Tổng kết |
+| Thời gian | Click vào đâu | Xem gì |
+|-----------|---------------|--------|
+| 0:00 → 1:00 | Explorer folder gốc | 6 folder chính |
+| 1:00 → 2:30 | `src/`, `models/`, `data/` | Mở rộng xem cấu trúc |
+| 2:30 → 4:30 | `src/detection/model.py` → `weights.py` → `boxes.py` → `infer.py` | Class RetinaFace (~dòng 50) |
+| 4:30 → 6:30 | `src/segmentation/model.py` → `losses.py` → `dataset.py` → `train.py` → `infer.py` | Class UNet (~dòng 40) |
+| 6:30 → 7:30 | `src/pipeline/orchestrator.py` → `src/utils/box_utils.py` → `src/eval.py` | Class Pipeline (~dòng 30) |
+| 7:30 → 9:00 | `runs/evaluation/segmentation_test_metrics.json` → `val_metrics.json` → `pipeline_smoke_test.json` → `runs/visualizations/test/sample_000_*.png` | Metrics + viz |
+| 9:00 → 9:30 | `tests/` → `docs/PRESENTATION_SCRIPT.md` → `docs/status/progress_status.md` | 67 tests |
+| 9:30 → 10:00 | Đóng file, show folder sạch | Tổng kết + Q&A |
 
 ---
 
-## 🎬 PHẦN 1: Mở Đầu (1:00)
+# 📖 BÀI TRÌNH BÀY HOÀN CHỈNH
 
-### Folder đang mở: `Face-Detection-Face-Segmentation/` (folder gốc)
-
-### Lời nói:
-
-> **[Mở folder gốc trong VS Code Explorer]**
->
-> "Xin chào mọi người. Project tôi trình bày hôm nay là **Face Detection & Face Segmentation** — một hệ thống AI 2 giai đoạn có khả năng vừa phát hiện vị trí khuôn mặt, vừa tách vùng khuôn mặt từ ảnh."
->
-> **[Chỉ folder gốc trong Explorer]**
->
-> "Đây là folder project. Khi các bạn nhìn vào đây, các bạn sẽ thấy toàn bộ những gì tôi đã xây dựng: source code, models đã train, data, kết quả evaluation, tests và documentation."
-
-> **[Chỉ vào từng folder lớn một lượt — overview]**
->
-> "Tổng quan có 6 folder chính:"
-> "- `src/` — toàn bộ source code"
-> "- `models/` — 2 checkpoints đã train"
-> "- `data/` — dataset đã xử lý"
-> "- `runs/` — kết quả evaluation và visualization"
-> "- `tests/` — 67 unit tests"
-> "- `docs/` — documentation"
-
-### Lưu ý khi nói:
-- ❗ Mở sẵn VS Code Explorer panel bên trái
-- ❗ Chỉ folder, đừng mở file
-- ❗ Nói chậm, rõ ràng
+> **Hướng dẫn:** Đọc từ đầu đến cuối file này. Mỗi đoạn cách nhau bằng khoảng lặng — nơi bạn cần click chuột hoặc cuộn file. Các ghi chú trong ngoặc vuông `[...]` là hướng dẫn hành động, KHÔNG đọc to.
 
 ---
 
-## 📁 PHẦN 2: Cấu Trúc Project (1:30)
+## 🟢 PHẦN 1: Mở Đầu (0:00 → 1:00)
 
-### Folder đang mở: `src/`, `models/`, `data/`
+**[Mở VS Code Explorer, đảm bảo folder gốc đang hiển thị. Chưa click vào file nào.]**
 
-### Lời nói:
+Xin chào mọi người. Hôm nay tôi sẽ trình bày project **Face Detection & Face Segmentation** của tôi — một hệ thống AI hai giai đoạn có khả năng vừa phát hiện vị trí khuôn mặt, vừa tách chính xác vùng khuôn mặt từ một bức ảnh.
 
-> **[Click vào folder `src/`, mở rộng]**
->
-> "Folder `src/` chứa toàn bộ source code, được tổ chức theo module:"
->
-> ```
-> src/
-> ├── detection/       # Stage 1: RetinaFace
-> ├── segmentation/    # Stage 2: U-Net
-> ├── pipeline/        # Orchestrator
-> ├── utils/           # Box/mask/NMS/I-O helpers
-> └── eval.py          # Main evaluation entrypoint
-> ```
+Trước khi vào chi tiết, cho tôi hỏi một câu: các bạn đã bao giờ thắc mắc filter trên Instagram hoạt động như thế nào chưa? Thì đằng sau nó là một hệ thống rất giống như những gì tôi đang làm.
 
-> **[Click vào `models/`]**
->
-> "Folder `models/` chứa 2 file checkpoint đã train:"
-> "- `retinaface_final.pth` — 84.6 MB, cho Stage 1"
-> "- `unet_final.pth` — 118.5 MB, cho Stage 2"
->
-> "Tổng cộng khoảng 200 MB models."
+**[Chỉ vào Explorer panel bên trái]**
 
-> **[Click vào `data/`]**
->
-> "Folder `data/` chứa dataset đã được xử lý sẵn:"
-> "- `processed/wider_face/` — WIDER FACE annotations cho detection"
-> "- `processed/celeba_mask/` — CelebAMask-HQ cho segmentation"
->
-> "Mỗi dataset đã được split sẵn train/val/test."
+Và đây chính là folder project của tôi. Khi các bạn nhìn vào Explorer bên trái, các bạn sẽ thấy tất cả những gì tôi đã xây dựng. Tổng quan có sáu folder chính:
 
-### Ưu điểm khi hỏi "Tại sao tổ chức như vậy?":
-> "Tách module theo chức năng — detection riêng, segmentation riêng — để dễ maintain. Mỗi module có thể chạy độc lập hoặc kết hợp qua pipeline."
+- `src` — toàn bộ source code
+- `models` — hai checkpoint đã train
+- `data` — dataset đã xử lý
+- `runs` — kết quả evaluation và visualization
+- `tests` — sáu mươi bảy unit tests
+- `docs` — documentation
+
+**[Đợi 1-2 giây để khán giả nhìn theo hướng của bạn]**
+
+Trong mười phút tới, tôi sẽ dẫn các bạn đi qua từng folder, mở từng file quan trọng, và giải thích những gì đã được làm.
 
 ---
 
-## 🧠 PHẦN 3: Stage 1 — RetinaFace (2:00)
+## 🟢 PHẦN 2: Cấu Trúc Project (1:00 → 2:30)
 
-### Folder đang mở: `src/detection/`
+**[Click vào `src/` để mở rộng]**
 
-### Lời nói:
+Bắt đầu với folder `src` — nơi chứa toàn bộ source code. Folder này được tổ chức theo module chức năng:
 
-> **[Mở folder `src/detection/`, chỉ từng file]**
->
-> "Bây giờ vào chi tiết Stage 1 — Detection. Folder `src/detection/` có các file sau:"
->
-> ```
-> src/detection/
-> ├── model.py           # Kiến trúc RetinaFace
-> ├── weights.py         # Load/save checkpoint
-> ├── boxes.py           # Decode + NMS
-> └── infer.py           # Inference cho 1 ảnh
-> ```
+- `detection` — Stage 1, dùng model RetinaFace để tìm khuôn mặt
+- `segmentation` — Stage 2, dùng model U-Net để tách vùng mặt
+- `pipeline` — orchestrator để chạy end-to-end
+- `utils` — các hàm helper như IoU, mask processing, visualization
 
-> **[Mở file `model.py`]**
->
-> "File `model.py` định nghĩa kiến trúc RetinaFace:"
-> "- Backbone ResNet-34"
-> "- FPN — Feature Pyramid Network — 3 levels"
-> "- SSH — Single Stage Headless — context module"
-> "- 3 multi-task heads: classification, box regression, landmark"
+Cách tổ chức này giúp mỗi module có thể chạy độc lập, và kết hợp lại qua pipeline.
 
-> **[Cuộn xuống, chỉ class chính]**
->
-> "Class chính là `RetinaFace` — input là ảnh 640×640, output là classification logits, box deltas, và landmark deltas ở 3 FPN levels."
+**[Click vào `models/` để mở rộng]**
 
-> **[Mở file `weights.py`]**
->
-> "File `weights.py` xử lý load/save checkpoint. Đây là phần quan trọng vì checkpoint phải load đúng key mới chạy được."
+Sang folder `models`. Đây là hai file checkpoint tôi đã train được:
 
-> **[Mở file `boxes.py`]**
->
-> "File `boxes.py` làm 2 việc:"
-> "- **Decode** — chuyển box deltas thành tọa độ thật"
-> "- **NMS** — Non-Maximum Suppression để loại box trùng"
+- `retinaface_final.pth` — Stage 1, nặng 84.6 MB
+- `unet_final.pth` — Stage 2, nặng 118.5 MB
 
-> **[Mở file `infer.py`]**
->
-> "File `infer.py` là entrypoint chạy detection cho 1 ảnh, trả về list bounding boxes + scores."
+Tổng cộng khoảng hai trăm megabytes.
 
-### Số liệu:
-> "Toàn bộ model có **22.1 triệu tham số**. Trong smoke test, forward pass mất **0.56 giây** trên CPU, top confidence score đạt **1.42**."
+**[Click vào `data/` để mở rộng]**
 
-### Timing:
-- 0:00 → 0:30 — Liệt kê file trong folder
-- 0:30 → 1:00 — Mở `model.py`, giải thích kiến trúc
-- 1:00 → 1:30 — Mở `weights.py` + `boxes.py`
-- 1:30 → 2:00 — Mở `infer.py` + số liệu
+Tiếp theo là folder `data`. Dataset đã được xử lý sẵn, chia thành hai phần:
+
+- `processed/wider_face` — annotations cho detection
+- `processed/celeba_mask` — ảnh khuôn mặt kèm mask cho segmentation
+
+Mỗi dataset đã được split sẵn thành train, validation, và test.
+
+**[Đóng các folder vừa mở rộng, chuẩn bị mở `src/detection/`]**
+
+Tổng cộng project có khoảng 5,000 dòng Python code, hai model đã train, và documentation đầy đủ.
 
 ---
 
-## 🎨 PHẦN 4: Stage 2 — U-Net (2:00)
+## 🟢 PHẦN 3: Stage 1 — Detection với RetinaFace (2:30 → 4:30)
 
-### Folder đang mở: `src/segmentation/`
+**[Click vào `src/detection/` để mở rộng, double-click vào `model.py`]**
 
-### Lời nói:
+Bây giờ tôi sẽ đi vào chi tiết Stage 1 — Detection. Folder `src/detection/` có bốn file chính, và file đầu tiên tôi mở là `model.py`.
 
-> **[Mở folder `src/segmentation/`, chỉ từng file]**
->
-> "Sang Stage 2 — Segmentation. Folder `src/segmentation/` có cấu trúc tương tự:"
->
-> ```
-> src/segmentation/
-> ├── model.py           # Kiến trúc U-Net
-> ├── weights.py         # Load/save checkpoint
-> ├── losses.py          # BCE + Dice loss
-> ├── dataset.py         # DataLoader cho CelebAMask-HQ
-> ├── train.py           # Training loop
-> └── infer.py           # Inference cho 1 face crop
-> ```
+**[Cuộn xuống khoảng dòng 50, chỉ class RetinaFace]**
 
-> **[Mở file `model.py`]**
->
-> "File `model.py` định nghĩa kiến trúc U-Net — encoder-decoder với skip connections:"
-> "- Encoder: 4 DoubleConv blocks, downsampling bằng MaxPool"
-> "- Bottleneck: 1024 channels"
-> "- Decoder: 4 upsampling blocks, mỗi block nối với skip từ encoder"
-> "- Output: 2 channels (background + face)"
+Class chính ở đây là `RetinaFace`. Kiến trúc gồm bốn phần:
 
-> **[Mở file `losses.py`]**
->
-> "File `losses.py` định nghĩa combined loss: **0.5 × BCE + 0.5 × Dice**."
-> "- BCE ổn định gradient"
-> "- Dice xử lý tốt class imbalance"
+**[Đọc chậm từng phần]**
 
-> **[Mở file `dataset.py`]**
->
-> "File `dataset.py` chứa DataLoader cho CelebAMask-HQ — đọc ảnh + mask, áp dụng augmentation như flip, color jitter."
+- **Backbone ResNet-34** — trích xuất feature maps ở bốn scales khác nhau
+- **FPN — Feature Pyramid Network** — tạo pyramid ba levels để phát hiện mặt ở nhiều kích thước
+- **SSH context module** — mở rộng receptive field
+- **Ba multi-task heads** — classification, box regression, và landmark prediction
 
-> **[Mở file `train.py`]**
->
-> "File `train.py` là training loop: Adam optimizer, lr=1e-3, batch size=16, 30 epochs, training trên CPU."
+**[Click sang tab `weights.py`]**
 
-> **[Mở file `infer.py`]**
->
-> "File `infer.py` là inference cho 1 face crop — input là ảnh 256×256, output là binary mask."
+Tiếp theo là file `weights.py`. File này xử lý load và save checkpoint. Đây là phần quan trọng vì checkpoint phải được load đúng key thì model mới chạy được.
 
-### Số liệu:
-> "U-Net có **31 triệu tham số**, checkpoint **118.5 MB**. Input size 256×256."
+**[Click sang tab `boxes.py`]**
 
-### Timing:
-- 0:00 → 0:30 — Liệt kê file trong folder
-- 0:30 → 1:00 — Mở `model.py`, giải thích U-Net
-- 1:00 → 1:30 — Mở `losses.py` + `dataset.py`
-- 1:30 → 2:00 — Mở `train.py` + `infer.py` + số liệu
+File `boxes.py` làm hai việc chính: **decode** — chuyển box deltas thành tọa độ thật, và **NMS** — Non-Maximum Suppression để loại các box trùng nhau.
+
+**[Click sang tab `infer.py`]**
+
+Cuối cùng là `infer.py` — entrypoint chạy detection cho một ảnh. Input là ảnh 640×640, output là list bounding boxes cùng confidence scores.
+
+**[Đóng các tab này, nhưng giữ Explorer mở `src/detection/`]**
+
+Toàn bộ Stage 1 có hai mươi hai triệu một trăm nghìn tham số. Trong smoke test, forward pass mất 0.56 giây trên CPU, và top confidence score đạt 1.42 — tức là model rất tự tin với prediction của mình.
 
 ---
 
-## 🔗 PHẦN 5: Pipeline & Utils (1:00)
+## 🟢 PHẦN 4: Stage 2 — Segmentation với U-Net (4:30 → 6:30)
 
-### Folder đang mở: `src/pipeline/`, `src/utils/`
+**[Click vào `src/segmentation/` để mở rộng, double-click vào `model.py`]**
 
-### Lời nói:
+Sang Stage 2 — Segmentation. Folder `src/segmentation/` có sáu file, nhiều hơn detection vì có thêm phần training.
 
-> **[Mở folder `src/pipeline/`]**
->
-> "Folder `src/pipeline/` chứa orchestrator — file chính kết nối 2 stages:"
-> "- `orchestrator.py` — class `FaceSegmentationPipeline` chạy end-to-end"
-> "- Khi gọi `pipeline.run('image.jpg')` → chạy RetinaFace → cắt face crops → chạy U-Net → render overlay"
+**[Cuộn xuống khoảng dòng 40, chỉ class UNet]**
 
-> **[Mở folder `src/utils/`]**
->
-> "Folder `src/utils/` chứa các helper:"
-> "- `box_utils.py` — IoU computation, box transforms"
-> "- `mask_utils.py` — mask resize, overlay rendering"
-> "- `io_utils.py` — load/save JSON, PNG"
-> "- `visualization.py` — vẽ bbox, mask, summary grid"
+File `model.py` định nghĩa kiến trúc U-Net — một mạng encoder-decoder có dạng chữ U đối xứng:
 
-> **[Mở file `eval.py` ở root `src/`]**
->
-> "Cuối cùng là file `src/eval.py` — main entrypoint để chạy evaluation. File này load 2 models, chạy trên test set, in metrics."
+- **Encoder** — bốn DoubleConv blocks, mỗi block có hai lớp Conv-BN-ReLU 3×3, xen giữa là MaxPool 2×2 để giảm resolution
+- **Bottleneck** — 1024 channels ở đáy chữ U
+- **Decoder** — bốn upsampling blocks, mỗi block nối với skip connection từ encoder cùng level
+- **Output** — hai channels: background và face
 
-### Timing:
-- 0:00 → 0:30 — Pipeline
-- 0:30 → 1:00 — Utils + eval entrypoint
+**[Nhấn mạnh]**
 
----
+Điểm đặc biệt của U-Net là **skip connections** — feature map từ encoder được nối thẳng vào decoder cùng level. Điều này cực kỳ quan trọng vì giúp decoder khôi phục spatial details mà encoder đã mất khi downsampling.
 
-## 📊 PHẦN 6: Kết Quả & Đánh Giá (1:30)
+**[Click sang tab `losses.py`]**
 
-### Folder đang mở: `runs/`
+File `losses.py` định nghĩa combined loss: 0.5 nhân BCE cộng 0.5 nhân Dice. BCE ổn định gradient, Dice xử lý tốt class imbalance — vì mặt chiếm phần lớn ảnh nên cần Dice để cân bằng.
 
-### Lời nói:
+**[Click sang tab `dataset.py`]**
 
-> **[Mở folder `runs/`, chỉ các sub-folder]**
->
-> "Bây giờ vào phần quan trọng nhất — kết quả thực tế. Folder `runs/` chứa toàn bộ output của project:"
->
-> ```
-> runs/
-> ├── evaluation/      # Metrics JSON
-> └── visualizations/  # 8 sample PNGs
-> ```
+File `dataset.py` chứa DataLoader cho CelebAMask-HQ — đọc ảnh kèm mask, áp dụng augmentation như flip và color jitter.
 
-> **[Mở folder `runs/evaluation/`, chỉ từng file JSON]**
->
-> "Folder `evaluation/` có các file JSON chứa metrics:"
-> "- `segmentation_test_metrics.json` — kết quả trên test set"
-> "- `segmentation_val_metrics.json` — kết quả trên val set"
-> "- `pipeline_smoke_test.json` — kết quả smoke test pipeline"
+**[Click sang tab `train.py`]**
 
-> **[Mở file `segmentation_test_metrics.json`]**
->
-> "Đây là kết quả trên test set — 100 samples:"
->
-> | Metric | Value | Target |
-> |--------|-------|--------|
-> | **Mean IoU** | **0.9679** | ≥ 0.90 ✅ |
-> | **Mean Dice** | **0.9834** | ≥ 0.95 ✅ |
-> | **Pixel Accuracy** | **0.9770** | ≥ 0.97 ✅ |
+File `train.py` là training loop. Tôi dùng Adam optimizer, learning rate 1e-3, batch size 16, train 30 epochs trên CPU.
 
-> **[Nhấn mạnh]**
->
-> "IoU đạt **96.79%** — vượt target 90% tận 7.8 điểm. Dice **98.34%** cũng vượt target 95%."
->
-> "Trên validation set, IoU là **0.9666** — gần như tương đương test set, chứng tỏ model không bị overfitting."
+**[Click sang tab `infer.py`]**
 
-> **[Mở file `pipeline_smoke_test.json`]**
->
-> "File `pipeline_smoke_test.json` cho thấy:"
-> "- Verdict: **OK**"
-> "- RetinaFace forward: **0.56s**"
-> "- Top confidence: **1.42**"
->
-> "Tức là end-to-end pipeline chạy ổn định."
+Và cuối cùng là `infer.py` — inference cho một face crop. Input là ảnh 256×256, output là binary mask.
 
-> **[Mở folder `runs/visualizations/test/`, chỉ các PNG]**
->
-> "Folder `visualizations/test/` có 8 ảnh PNG visualization. Mỗi ảnh có 4 panel:"
-> "- Ảnh gốc"
-> "- Mask dự đoán"
-> "- Overlay mask đỏ"
-> "- Ground truth"
->
-> **[Mở 1 ảnh PNG bất kỳ]**
->
-> "Đây là visualization thực tế. Mask dự đoán gần như khớp hoàn toàn với ground truth."
+**[Đóng các tab này]**
 
-### Timing:
-- 0:00 → 0:30 — Liệt kê folder `runs/`
-- 0:30 → 0:50 — Show metrics test set
-- 0:50 → 1:10 — Validation + smoke test
-- 1:10 → 1:30 — Demo visualization
+U-Net có ba mươi mốt triệu tham số, checkpoint nặng 118.5 MB. Tại sao chọn U-Net thay vì DeepLab hay SegFormer? Vì U-Net đơn giản hơn, train nhanh hơn, và đủ tốt cho binary face segmentation.
 
 ---
 
-## 🧪 PHẦN 7: Tests & Documentation (0:30)
+## 🟢 PHẦN 5: Pipeline và Utils (6:30 → 7:30)
 
-### Folder đang mở: `tests/`, `docs/`
+**[Click vào `src/pipeline/`, double-click `orchestrator.py`]**
 
-### Lời nói:
+Tiếp theo là folder `src/pipeline/`. File quan trọng nhất là `orchestrator.py`.
 
-> **[Mở folder `tests/`, chỉ các file test]**
->
-> "Folder `tests/` chứa **67 unit tests** — tất cả đều passing. Test cover:"
-> "- Model architecture (RetinaFace + U-Net)"
-> "- Box decode + NMS"
-> "- Mask operations"
-> "- Pipeline end-to-end"
-> "- I/O helpers"
+**[Chỉ class FaceSegmentationPipeline ở khoảng dòng 30]**
 
-> **[Mở folder `docs/`, chỉ các file chính]**
->
-> "Folder `docs/` chứa documentation:"
-> "- `PRESENTATION_SCRIPT.md` — kịch bản trình bày này"
-> "- `progress_status.md` — status hiện tại của project"
-> "- `ROADMAP.md` — lộ trình phát triển"
-> "- `ARCHITECTURE.md` ở root — chi tiết kiến trúc"
->
-> "Tổng cộng khoảng 13 markdown files."
+Class `FaceSegmentationPipeline` chạy end-to-end. Khi tôi gọi `pipeline.run('image.jpg')`, nó sẽ: chạy RetinaFace trước để lấy bounding boxes, sau đó cắt face crops và chạy U-Net cho từng crop, cuối cùng render overlay đỏ lên mặt và lưu kèm file JSON.
 
-### Timing:
-- 0:00 → 0:15 — Tests
-- 0:15 → 0:30 — Documentation
+**[Click sang tab `src/utils/box_utils.py`]**
+
+Folder `src/utils/` chứa các helper. File `box_utils.py` có hàm IoU và các box transforms — dùng để tính overlap giữa predicted box và ground truth.
+
+**[Click sang tab `src/eval.py` ở root của `src/`]**
+
+Và cuối cùng là file `src/eval.py` — main entrypoint để chạy evaluation. File này load cả hai models, chạy trên test set, in metrics ra JSON.
+
+**[Đóng các tab]**
 
 ---
 
-## 🎓 PHẦN 8: Kết Luận & Q&A (0:30)
+## 🟢 PHẦN 6: Kết Quả và Đánh Giá (7:30 → 9:00)
 
-### Folder đang mở: Folder gốc `Face-Detection-Face-Segmentation/`
+**[Click vào `runs/`, mở rộng `runs/evaluation/`, double-click vào `segmentation_test_metrics.json`]**
 
-### Lời nói:
+Bây giờ là phần quan trọng nhất — kết quả thực tế. Tôi mở file `segmentation_test_metrics.json` chạy trên 100 samples từ test set.
 
-> **[Quay lại folder gốc]**
->
-> "Tóm lại, những gì project đã làm được:"
-> "- ✅ Xây dựng pipeline 2-stage: RetinaFace detection + U-Net segmentation"
-> "- ✅ Train thành công cả 2 models trên CPU"
-> "- ✅ U-Net đạt IoU **96.79%**, vượt target"
-> "- ✅ 67 unit tests passing"
-> "- ✅ Full documentation + visualizations"
+**[Đọc chậm các con số]**
 
-> **[Đóng các file đang mở, show folder gốc sạch sẽ]**
->
-> "Tổng project có khoảng 5,000 dòng Python code, 2 trained models (~200MB), và 13 markdown docs."
->
-> "Cảm ơn mọi người đã lắng nghe. Tôi sẵn sàng trả lời câu hỏi."
+- **Mean IoU: 0.9679** — tức là 96.79%
+- **Mean Dice: 0.9834** — tức là 98.34%
+- **Pixel Accuracy: 0.9770** — tức là 97.70%
 
-### Q&A thường gặp:
+Target ban đầu là IoU lớn hơn hoặc bằng 0.90, Dice lớn hơn hoặc bằng 0.95, và Pixel Accuracy lớn hơn hoặc bằng 0.97.
 
-**Q: Tại sao chọn U-Net thay vì DeepLab?**
-> "U-Net đơn giản hơn, train nhanh hơn, đủ tốt cho binary face segmentation. CelebAMask-HQ có face chiếm phần lớn ảnh nên U-Net là lựa chọn optimal."
+**[Nhấn mạnh]**
 
-**Q: Có cần GPU không?**
-> "Không — inference chạy OK trên CPU, khoảng 1.2 giây cho mỗi ảnh có 1 mặt."
+IoU đạt 96.79%, vượt target 7.8 điểm phần trăm. Dice 98.34% cũng vượt target. Điều này có nghĩa là model phân biệt được pixel thuộc mặt và pixel thuộc background với độ chính xác rất cao.
 
-**Q: Tại sao IoU cao vậy?**
-> "Dataset chất lượng cao + U-Net skip connections + combined BCE+Dice loss — tất cả kết hợp lại cho kết quả tốt."
+**[Click sang tab `segmentation_val_metrics.json`]**
 
-### Timing:
-- 0:00 → 0:15 — Tổng kết những gì đã làm
-- 0:15 → 0:30 — Câu kết + Q&A
+Trên validation set, kết quả cũng tương đương — IoU 96.66%, Dice 98.26%. Chứng tỏ model không bị overfitting, generalize tốt.
 
----
+**[Click sang tab `pipeline_smoke_test.json`]**
 
-## 📌 Tips Trình Bày Với Folder
+File `pipeline_smoke_test.json` cho thấy verdict là OK — pipeline end-to-end chạy ổn định.
 
-### 🖥️ Chuẩn bị trước:
-1. ✅ Mở VS Code với folder project
-2. ✅ Mở sẵn Explorer panel bên trái
-3. ✅ Tắt các file không liên quan
-4. ✅ Zoom terminal/editor vừa phải để khán giả thấy
-5. ✅ Mở sẵn file `segmentation_test_metrics.json` trong editor
+**[Đóng các file JSON, mở `runs/visualizations/test/`, double-click vào một ảnh PNG bất kỳ]**
 
-### 🎤 Kỹ năng trình bày:
-- ❗ **Luôn chỉ folder/file** khi nói về nó
-- ❗ **Click mở file** để khán giả thấy nội dung thật
-- ❗ **Cuộn chậm** khi show code
-- ❗ **Đóng file** sau khi xong để Explorer sạch sẽ
-- ❗ **Nói số liệu** dựa trên file JSON thật, không nhớ
+Để các bạn thấy trực quan, tôi mở một ảnh visualization. Ảnh này có bốn panel:
 
-### ⏰ Quản lý thời gian:
-- Tổng 10 phút — đeo đồng hồ
-- Mỗi phần có timing rõ — đừng nói quá lâu ở 1 folder
-- Nếu hết giờ ở phần 4 → skip phần 7, vào Q&A
+- Ảnh gốc bên trái
+- Mask dự đoán
+- Overlay mask đỏ
+- Ground truth bên phải
 
-### 💬 Câu mở đầu dự phòng:
-> "Đây là folder project của tôi. Khi các bạn nhìn vào Explorer bên trái, các bạn sẽ thấy tất cả những gì tôi đã làm trong vài tháng qua."
+**[Chỉ vào ảnh]**
 
-### 🎤 Câu kết dự phòng:
-> "Tổng cộng project có 6 folder chính, 2 models đã train, 67 tests passing, và IoU đạt 96.79%. Cảm ơn mọi người."
+Như các bạn thấy, mask dự đoán gần như khớp hoàn toàn với ground truth. Đó là lý do IoU đạt 96.79%.
+
+**[Đóng ảnh PNG]**
 
 ---
 
-## 🗂️ Checklist Folder Cần Mở Theo Thứ Tự
+## 🟢 PHẦN 7: Tests và Documentation (9:00 → 9:30)
 
-```
-Phase 1 (0:00 → 1:00)   → Folder gốc (overview)
-Phase 2 (1:00 → 2:30)   → src/, models/, data/
-Phase 3 (2:30 → 4:30)   → src/detection/
-Phase 4 (4:30 → 6:30)   → src/segmentation/
-Phase 5 (6:30 → 7:30)   → src/pipeline/, src/utils/
-Phase 6 (7:30 → 9:00)   → runs/evaluation/, runs/visualizations/
-Phase 7 (9:00 → 9:30)   → tests/, docs/
-Phase 8 (9:30 → 10:00)  → Folder gốc (kết luận + Q&A)
-```
+**[Click vào `tests/` để mở rộng]**
+
+Sang folder `tests/`. Project có tổng cộng sáu mươi bảy unit tests, tất cả đều passing. Test cover:
+
+- Kiến trúc model của cả RetinaFace và U-Net
+- Box decode và NMS
+- Mask operations
+- Pipeline end-to-end
+- I-O helpers
+
+**[Click vào `docs/` để mở rộng]**
+
+Và folder `docs/` chứa documentation. File quan trọng nhất là `PRESENTATION_SCRIPT.md` — chính là kịch bản tôi đang đọc. Ngoài ra còn có `progress_status.md` để theo dõi status hiện tại, và `ROADMAP.md` để xem lộ trình phát triển tiếp theo.
+
+**[Đóng folder]**
 
 ---
 
-## 🔗 File Tham Khảo Khi Bị Hỏi Sâu
+## 🟢 PHẦN 8: Kết Luận và Q&A (9:30 → 10:00)
 
-| Câu hỏi | Mở file |
-|---------|---------|
-| Kiến trúc RetinaFace chi tiết | `src/detection/model.py` |
-| Kiến trúc U-Net chi tiết | `src/segmentation/model.py` |
-| Loss function | `src/segmentation/losses.py` |
+**[Đóng tất cả file đang mở, chỉ để Explorer show folder gốc sạch sẽ]**
+
+**[Nhìn khán giả]**
+
+Tóm lại, những gì project này đã làm được:
+
+- Xây dựng pipeline hai giai đoạn: RetinaFace detection cộng U-Net segmentation
+- Train thành công cả hai models trên CPU
+- U-Net đạt IoU 96.79%, vượt target
+- Sáu mươi bảy unit tests passing
+- Documentation và visualizations đầy đủ
+
+**[Dứt khoát, tự tin]**
+
+Hướng phát triển tiếp theo là chạy full WIDER FACE mAP metrics, GPU inference để speed up năm đến mười lần, và ONNX export cho production deployment.
+
+Cảm ơn mọi người đã lắng nghe. Tôi sẵn sàng trả lời câu hỏi.
+
+**[Đợi câu hỏi]**
+
+---
+
+# 📝 PHỤ LỤC: CÂU TRẢ LỜI Q&A
+
+### Câu hỏi 1: Tại sao chọn U-Net thay vì DeepLab hay SegFormer?
+
+U-Net đơn giản hơn, train nhanh hơn, và đủ tốt cho bài toán binary face segmentation. DeepLab với atrous convolution phù hợp multi-class hơn. SegFormer là transformer-based mới hơn nhưng tốn nhiều compute hơn. Với bài toán hai class và dataset CelebAMask-HQ có mặt chiếm phần lớn ảnh, U-Net là lựa chọn optimal.
+
+### Câu hỏi 2: Có cần GPU không?
+
+Inference chạy OK trên CPU — khoảng 1.2 giây cho mỗi ảnh có một mặt. Training thì có GPU sẽ nhanh hơn năm đến mười lần, nhưng tôi đã train thành công trên CPU với thời gian chấp nhận được.
+
+### Câu hỏi 3: Tại sao IoU cao vậy — 96.79%?
+
+CelebAMask-HQ là dataset chất lượng cao, mặt chiếm phần lớn ảnh nên dễ segment. U-Net với skip connections rất phù hợp cho bài toán có contrast rõ giữa foreground và background. Ngoài ra combined loss BCE cộng Dice giúp ổn định gradient và xử lý tốt edge cases.
+
+### Câu hỏi 4: Có thể detect nhiều mặt trong một ảnh không?
+
+Có. RetinaFace detect được nhiều bounding boxes trong một ảnh. Mỗi box sẽ được segment riêng bằng U-Net. Pipeline đã hỗ trợ xử lý tuần tự N faces, tối đa 50 faces theo config.
+
+### Câu hỏi 5: So với face recognition thì khác gì?
+
+Face recognition là bài toán khác — cần embedding vector để so sánh danh tính. Project này chỉ dừng ở detection cộng segmentation: biết **ở đâu có mặt** và **đâu là vùng mặt**, không biết **mặt của ai**. Để làm recognition, cần thêm ArcFace hoặc FaceNet — bước tiếp theo trong pipeline face analysis.
+
+---
+
+# 🎯 CHECKLIST TRƯỚC KHI TRÌNH BÀY
+
+### Chuẩn bị môi trường:
+- [ ] Mở VS Code với folder project
+- [ ] Mở sẵn Explorer panel bên trái
+- [ ] Đặt Explorer chiếm khoảng 30-40% màn hình
+- [ ] Tắt các tab file không liên quan
+- [ ] Zoom editor vừa phải để khán giả thấy code
+
+### Chuẩn bị nội dung:
+- [ ] Mở sẵn file `PRESENTATION_SCRIPT.md` ở cửa sổ thứ 2 (hoặc in ra giấy)
+- [ ] Đọc qua bài trình bày một lần
+- [ ] Tập đọc to trước 5 phút
+- [ ] Đeo đồng hồ để kiểm tra timing
+
+### Trong khi trình bày:
+- [ ] Nhìn khán giả khi nói kết quả
+- [ ] Chỉ tay vào file khi đọc code
+- [ ] Đóng file sau khi xong để Explorer sạch
+- [ ] Nói chậm ở phần Pipeline và Kết quả
+
+### Kết thúc:
+- [ ] Đóng tất cả file, show folder gốc
+- [ ] Nói "Cảm ơn" rõ ràng
+- [ ] Đợi câu hỏi, dùng phụ lục Q&A nếu cần
+
+---
+
+# 🔗 FILE THAM KHẢO NHANH
+
+| Câu hỏi sâu | Mở file này |
+|-------------|-------------|
+| Kiến trúc RetinaFace | `src/detection/model.py` dòng 50-80 |
+| Kiến trúc U-Net | `src/segmentation/model.py` dòng 40-100 |
+| Loss function | `src/segmentation/losses.py` dòng 30-60 |
+| Training loop | `src/segmentation/train.py` dòng 80-120 |
+| Pipeline orchestrator | `src/pipeline/orchestrator.py` dòng 30-80 |
 | Metrics gốc | `runs/evaluation/segmentation_test_metrics.json` |
-| Pipeline code | `src/pipeline/orchestrator.py` |
-| Visualizations | `runs/visualizations/test/` |
 | Status project | `docs/status/progress_status.md` |
 | Lộ trình | `docs/planning/ROADMAP.md` |
