@@ -22,6 +22,41 @@
 
 ---
 
+## 📍 Mở File Nào Cụ Thể — Quick Reference
+
+> **Mục đích:** Bảng này cho biết **chính xác click vào file nào** ở mỗi phần. In ra hoặc để mở sẵn khi trình bày.
+
+| Thời gian | Click chuột phải → Mở file | Xem gì trong file |
+|-----------|---------------------------|------------------|
+| **0:00 → 1:00** | (không click, chỉ Explorer) | 6 folder chính: `src/`, `models/`, `data/`, `runs/`, `tests/`, `docs/` |
+| **1:00 → 2:30** | (chỉ mở rộng folder) | `src/detection/`, `src/segmentation/`, `src/pipeline/`, `src/utils/` |
+| | `models/` mở rộng | `retinaface_final.pth`, `unet_final.pth` |
+| | `data/` mở rộng | `processed/wider_face/`, `processed/celeba_mask/` |
+| **2:30 → 4:30** | `src/detection/model.py` | Tìm class `RetinaFace` (~dòng 50-80) |
+| | `src/detection/weights.py` | Hàm `load_checkpoint` (~dòng 20-40) |
+| | `src/detection/boxes.py` | Hàm `decode_boxes` + `nms` (~dòng 30-80) |
+| | `src/detection/infer.py` | Hàm `detect_faces` (~dòng 20-50) |
+| **4:30 → 6:30** | `src/segmentation/model.py` | Tìm class `UNet` (~dòng 40-100) |
+| | `src/segmentation/losses.py` | Hàm `combined_loss` (~dòng 30-60) |
+| | `src/segmentation/dataset.py` | Class `FaceSegDataset` (~dòng 20-50) |
+| | `src/segmentation/train.py` | Vòng lặp training (~dòng 80-120) |
+| | `src/segmentation/infer.py` | Hàm `segment_face` (~dòng 20-50) |
+| **6:30 → 7:30** | `src/pipeline/orchestrator.py` | Class `FaceSegmentationPipeline` (~dòng 30-80) |
+| | `src/utils/box_utils.py` | Hàm `iou`, `xyxy_to_xywh` |
+| | `src/eval.py` | Hàm `main` (~dòng 100-150) |
+| **7:30 → 9:00** | `runs/evaluation/segmentation_test_metrics.json` | Toàn bộ file (metrics) |
+| | `runs/evaluation/segmentation_val_metrics.json` | Toàn bộ file |
+| | `runs/evaluation/pipeline_smoke_test.json` | Field `verdict`, `retinaface` |
+| | `runs/visualizations/test/sample_*.png` | Mở 1 ảnh bất kỳ (4-panel) |
+| **9:00 → 9:30** | `tests/` | Tổng cộng 67 file `test_*.py` |
+| | `docs/PRESENTATION_SCRIPT.md` | File đang đọc |
+| | `docs/status/progress_status.md` | Status hiện tại |
+| | `docs/planning/ROADMAP.md` | Lộ trình |
+| | `ARCHITECTURE.md` (root) | Chi tiết kiến trúc |
+| **9:30 → 10:00** | (đóng file, show folder sạch) | Tổng kết |
+
+---
+
 ## 🎬 PHẦN 1: Mở Đầu (1:00)
 
 ### Folder đang mở: `Face-Detection-Face-Segmentation/` (folder gốc)
