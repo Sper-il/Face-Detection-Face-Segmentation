@@ -58,6 +58,12 @@ DEFAULT_OUT_ROOT = REPO_ROOT / "data" / "processed" / "segmentation"
 # WIDER FACE pipeline expects downstream.
 FACE_LABEL_THRESHOLD = 1  # any pixel with value >= 1 is face
 
+# Resize target. CelebAMask-HQ ships images at 1024×1024 and component masks
+# at 512×512. We normalise *both* image and mask to a single 512×512 so the
+# segmentation model trains on a fixed input tensor and the mask stays
+# pixel-aligned with the image.
+DEFAULT_IMG_SIZE = 512
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Preprocess CelebAMask-HQ -> PNG + masks.")
@@ -67,6 +73,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-images", type=int, default=None)
     parser.add_argument("--val-ratio", type=float, default=0.1)
     parser.add_argument("--test-ratio", type=float, default=0.1)
+    parser.add_argument(
+        "--img-size",
+        type=int,
+        default=DEFAULT_IMG_SIZE,
+        help="Square resize target applied to both image and mask (pixels).",
+    )
     return parser.parse_args()
 
 
@@ -158,6 +170,7 @@ def write_split(
     images_dir: Path,
     masks_dir: Path,
     max_total: int | None,
+    img_size: int,
 ) -> tuple[int, int]:
     """Copy images + assembled masks → PNG. Returns ``(written, skipped)``.
 
@@ -200,9 +213,21 @@ def write_split(
         if mask is None:
             mask = np.zeros(img.shape[:2], dtype=np.uint8)
 
-        # Resize mask to image dims if needed (component masks are 512×512).
+        # Resize mask to image dims if needed (component masks are 512×512
+        # while CelebA-HQ images are 1024×1024). INTER_NEAREST keeps the
+        # binary labels crisp.
         if mask.shape != img.shape[:2]:
             mask = cv2.resize(mask, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_NEAREST)
+
+        # Normalise both image and mask to the target square size. INTER_AREA
+        # is preferred for downscaling the image (anti-aliased averaging);
+        # INTER_LINEAR is used for upscaling. Mask always uses NEAREST so
+        # we don't invent fractional face pixels.
+        if img.shape[:2] != (img_size, img_size):
+            img_h, img_w = img.shape[:2]
+            img_interp = cv2.INTER_AREA if max(img_h, img_w) > img_size else cv2.INTER_LINEAR
+            img = cv2.resize(img, (img_size, img_size), interpolation=img_interp)
+            mask = cv2.resize(mask, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
 
         flat_id = f"{fid:05d}.png"
         # The .png extension is what tells cv2.imwrite to use lossless
@@ -217,11 +242,14 @@ def write_split(
     return written, skipped
 
 
-def write_dataset_card(out_root: Path, train_n: int, val_n: int, test_n: int) -> None:
+def write_dataset_card(
+    out_root: Path, train_n: int, val_n: int, test_n: int, img_size: int
+) -> None:
     card = f"""# CelebAMask-HQ (processed)
 
 - **Source:** https://github.com/switchablenorms/CelebAMask-HQ
 - **Format:** PNG images + binary PNG masks (0 = background, 255 = face-region)
+- **Image size:** {img_size}×{img_size} (square, both image and mask normalised)
 - **Splits (seed=42):** train={train_n}, val={val_n}, test={test_n}
 - **Mask composition:** OR together all 19 component classes (skin, hair, eyes,
   nose, mouth, ears, neck, clothing, …) — anything that is part of a "face region".
@@ -249,6 +277,7 @@ def main() -> int:
     val_ids = [face_ids[i] for i in val_idx]
     test_ids = [face_ids[i] for i in test_idx]
     print(f"[celeb] split: train={len(train_ids)} val={len(val_ids)} test={len(test_ids)}")
+    print(f"[celeb] resize target: {args.img_size}×{args.img_size}")
 
     # Ensure dirs exist (don't wipe - allows resuming from partial runs).
     for split in ("train", "val", "test"):
@@ -261,6 +290,7 @@ def main() -> int:
         args.out_root / "train" / "images",
         args.out_root / "train" / "masks",
         args.max_images,
+        args.img_size,
     )
     n_val, _ = write_split(
         val_ids,
@@ -268,6 +298,7 @@ def main() -> int:
         args.out_root / "val" / "images",
         args.out_root / "val" / "masks",
         None,
+        args.img_size,
     )
     n_test, _ = write_split(
         test_ids,
@@ -275,9 +306,10 @@ def main() -> int:
         args.out_root / "test" / "images",
         args.out_root / "test" / "masks",
         None,
+        args.img_size,
     )
 
-    write_dataset_card(args.out_root, n_train, n_val, n_test)
+    write_dataset_card(args.out_root, n_train, n_val, n_test, args.img_size)
     print(f"[celeb] wrote {n_train + n_val + n_test} (image, mask) pairs to {args.out_root}")
     return 0
 

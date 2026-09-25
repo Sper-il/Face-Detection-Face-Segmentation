@@ -58,6 +58,13 @@ DEFAULT_OUT_ROOT = REPO_ROOT / "data" / "processed" / "detection"
 # ``invalid`` flips to ``confidence`` (1 = valid box, 0 = ignore).
 BBX_COLUMNS = 10
 
+# Resize target. WIDER images arrive at wildly different resolutions (event
+# photos, surveillance shots, movie stills) ranging from a few hundred pixels
+# to >3000 on the long side. We normalise everything to 512×512 so the
+# detection model can train on a fixed input tensor and bounding boxes stay
+# numerically friendly (pixel coords in [0, 512]).
+DEFAULT_IMG_SIZE = 512
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Preprocess WIDER FACE -> PNG + CSV.")
@@ -72,6 +79,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--val-ratio", type=float, default=0.1)
     parser.add_argument("--test-ratio", type=float, default=0.1)
+    parser.add_argument(
+        "--img-size",
+        type=int,
+        default=DEFAULT_IMG_SIZE,
+        help="Square resize target for both image and bbox coords (pixels).",
+    )
     return parser.parse_args()
 
 
@@ -156,6 +169,7 @@ def write_split(
     images_dir: Path,
     csv_path: Path,
     max_total: int | None,
+    img_size: int,
 ) -> tuple[int, int]:
     """Copy images → PNG and write ``annotations.csv``.
 
@@ -209,6 +223,17 @@ def write_split(
         if img is None:
             print(f"[wider] skip unreadable: {src}")
             continue
+        # Resize to a fixed square (img_size x img_size). WIDER raw images
+        # range from a few hundred to >3000 px on the long side; squashing
+        # to a constant keeps every downstream tensor the same shape.
+        # Use INTER_AREA for downscaling (anti-aliased) and INTER_LINEAR
+        # for upscaling.
+        orig_h, orig_w = img.shape[:2]
+        if (orig_h, orig_w) != (img_size, img_size):
+            interp = cv2.INTER_AREA if max(orig_h, orig_w) > img_size else cv2.INTER_LINEAR
+            img = cv2.resize(img, (img_size, img_size), interpolation=interp)
+        sx = img_size / orig_w
+        sy = img_size / orig_h
         # Re-encode JPEG-decoded ndarray as PNG. cv2 picks PNG encoder
         # because ``dst`` ends in ".png" — lossless deflate compression,
         # no quality parameter needed.
@@ -218,9 +243,21 @@ def write_split(
         # WIDER FACE keys are like "0--Parade/0_Parade_marchingband_1_849.jpg"
         wider_id = str(rel).replace("\\", "/")
         for x, y, w, h, valid in bbx_entries.get(wider_id, []):
-            x_max = x + w
-            y_max = y + h
-            rows.append((flat_id, x, y, x_max, y_max, valid))
+            # Apply the same scale factor to every box so coords stay
+            # pixel-aligned with the resized image. Round + clamp to the
+            # new canvas so out-of-frame boxes don't blow up later.
+            x_min = int(round(x * sx))
+            y_min = int(round(y * sy))
+            x_max = int(round((x + w) * sx))
+            y_max = int(round((y + h) * sy))
+            x_min = max(0, min(x_min, img_size - 1))
+            y_min = max(0, min(y_min, img_size - 1))
+            x_max = max(0, min(x_max, img_size))
+            y_max = max(0, min(y_max, img_size))
+            if x_max <= x_min or y_max <= y_min:
+                # Degenerate box after resize → drop it.
+                continue
+            rows.append((flat_id, x_min, y_min, x_max, y_max, valid))
 
     with open(csv_path, "w", encoding="utf-8", newline="") as fh:
         writer = csv.writer(fh)
@@ -230,12 +267,13 @@ def write_split(
     return images_written, len(rows)
 
 
-def write_dataset_card(out_root: Path, train_n: int, val_n: int, test_n: int) -> None:
+def write_dataset_card(out_root: Path, train_n: int, val_n: int, test_n: int, img_size: int) -> None:
     """Write a DATASET.md card with provenance + counts."""
     card = f"""# WIDER FACE (processed)
 
 - **Source:** http://shuoyang1213.me/WIDERFACE/
 - **Format:** PNG (decoded from JPG via OpenCV)
+- **Image size:** {img_size}×{img_size} (square, both image and bbox coords scaled)
 - **Splits (seed=42):** train={train_n}, val={val_n}, test={test_n}
 - **Annotation format:** CSV (`image_id, x_min, y_min, x_max, y_max, confidence`)
 - **Pre-processing script:** `src/data/preprocess_wider.py`
@@ -275,17 +313,18 @@ def main() -> int:
     val_dir = args.out_root / "val"
     test_dir = args.out_root / "test"
 
+    print(f"[wider] resize target: {args.img_size}×{args.img_size}")
     n_train, _ = write_split(
-        train_paths, bbx, train_dir, train_dir / "images", train_dir / "annotations.csv", args.max_images
+        train_paths, bbx, train_dir, train_dir / "images", train_dir / "annotations.csv", args.max_images, args.img_size
     )
     n_val, _ = write_split(
-        val_paths, bbx, val_dir, val_dir / "images", val_dir / "annotations.csv", None
+        val_paths, bbx, val_dir, val_dir / "images", val_dir / "annotations.csv", None, args.img_size
     )
     n_test, _ = write_split(
-        test_paths, bbx, test_dir, test_dir / "images", test_dir / "annotations.csv", None
+        test_paths, bbx, test_dir, test_dir / "images", test_dir / "annotations.csv", None, args.img_size
     )
 
-    write_dataset_card(args.out_root, n_train, n_val, n_test)
+    write_dataset_card(args.out_root, n_train, n_val, n_test, args.img_size)
     print(f"[wider] wrote {n_train + n_val + n_test} PNGs to {args.out_root}")
     return 0
 
